@@ -1,0 +1,33 @@
+local down = false
+local loop = game:GetService('RunService')
+local ws = game:GetService('Workspace')
+local players = game:GetService('Players')
+local player = players.LocalPlayer
+local mouse = player:GetMouse()
+ 
+loop.Heartbeat:Connect(function()
+    game:GetService("ReplicatedStorage").LocalRagdollEvent:Fire(false)
+ if player.Character:FindFirstChild("Push") then
+     ws[player.Name].Push.Enabled = true
+  ws[player.Name].Push.PushEvent:FireServer()
+ end
+ if player.Character:FindFirstChild("ImpulseGrenade") then
+  ws[player.Name].ImpulseGrenade.Enabled = true
+ end
+end)
+ 
+mouse.Button1Down:connect(function()
+    down = true
+    mouse.Button1Up:connect(function()
+        down = false
+    end)
+    while wait() do
+        if down and 
+        player.Character:FindFirstChild("ImpulseGrenade") and 
+        player.Character:FindFirstChild("ImpulseGrenade").Enabled == true then
+                player.Character.ImpulseGrenade:Activate()
+        else
+            break
+        end
+    end
+end)
