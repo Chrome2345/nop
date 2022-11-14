@@ -1,0 +1,364 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Doors Admin Panel - Modified By MidnightCyborg")
+
+--Tabs
+local Tab1 = Window:NewTab("Entities")
+--Sections
+local TabSection1 = Tab1:NewSection("Entites")
+--Buttons
+TabSection1:NewButton("Rush", "ButtonInfo", function()
+    local Creator = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors%20Entity%20Spawner/Source.lua"))()
+
+-- Create entity
+
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(102, 255, 250)
+game.Lighting.MainColorCorrection.Contrast = 1
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(3),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+
+local entity = Creator.createEntity({
+    CustomName = "Rush", -- Custom name of your entity
+    Model = "rbxassetid://11546412114", -- Can be GitHub file or rbxassetid
+    Speed = 150, -- Percentage, 100 = default Rush speed
+    DelayTime = 3, -- Time before starting cycles (seconds)
+    HeightOffset = 0,
+    CanKill = false,
+    BreakLights = true,
+    FlickerLights = {
+        true, -- Enabled
+        2.5, -- Time (seconds)
+    },
+    Cycles = {
+        Min = 1,
+        Max = 1,
+        WaitTime = 7,
+    },
+    CamShake = {
+        true, -- Enabled
+        {5, 15, 0.1, 1}, -- Shake values (don't change if you don't know)
+        100, -- Shake start distance (from Entity to you)
+    },
+    Jumpscare = {
+        true, -- Enabled ('false' if you don't want jumpscare)
+        {
+            Image1 = "rbxassetid://10716387808", -- Image1 url
+            Image2 = "rbxassetid://11033979445", -- Image2 url
+            Shake = true,
+            Sound1 = {
+                11033979445, -- SoundId
+                { Volume = 0.5 }, -- Sound properties
+            },
+            Sound2 = {
+                6343741731, -- SoundId
+                { Volume = 0.5 }, -- Sound properties
+            },
+            Flashing = {
+                true, -- Enabled
+                Color3.fromRGB(255, 0, 0), -- Color
+            },
+            Tease = {
+                true, -- Enabled ('false' if you don't want tease)
+                Min = 1,
+                Max = 3,
+            },
+        },
+    },
+    CustomDialog = {"You Died To Rush", "He Is A Tricky One.", "When The Lights Flicker", "His Presents Will Be Known", "Hide When The Lights Flicker Or Suffer Your Death."}, -- Custom death message (can be as long as you want)
+})
+
+-----[[ Advanced ]]-----
+entity.Debug.OnEntitySpawned = function(entityModel)
+    print("Entity has spawned:", entityModel)
+end
+
+entity.Debug.OnEntityDespawned = function(entityModel)
+    print("Entity has despawned:", mentityModelodel)
+end
+
+entity.Debug.OnEntityStartMoving = function(entityModel)
+    print("Entity has started moving:", entityModel)
+end
+
+entity.Debug.OnEntityFinishedRebound = function(entityModel)
+    print("Entity finished rebound:", entityModel)
+end
+
+entity.Debug.OnDeath = function()
+    warn("You died.")
+end
+------------------------
+
+-- Run the created entity
+Creator.runEntity(entity)
+end)
+
+TabSection1:NewButton("Ambush", "ButtonInfo", function()
+    local Creator = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors%20Entity%20Spawner/Source.lua"))()
+
+-- Create entity
+
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(102, 255, 250)
+game.Lighting.MainColorCorrection.Contrast = 1
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(3),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+
+local entity = Creator.createEntity({
+    CustomName = "Ambush", -- Custom name of your entity
+    Model = "rbxassetid://11546456008", -- Can be GitHub file or rbxassetid
+    Speed = 150, -- Percentage, 100 = default Rush speed
+    DelayTime = 3, -- Time before starting cycles (seconds)
+    HeightOffset = 0,
+    CanKill = false,
+    BreakLights = true,
+    FlickerLights = {
+        true, -- Enabled
+        2.5, -- Time (seconds)
+    },
+    Cycles = {
+        Min = 3,
+        Max = 5,
+        WaitTime = 3,
+    },
+    CamShake = {
+        true, -- Enabled
+        {5, 15, 0.1, 1}, -- Shake values (don't change if you don't know)
+        100, -- Shake start distance (from Entity to you)
+    },
+    Jumpscare = {
+        true, -- Enabled ('false' if you don't want jumpscare)
+        {
+            Image1 = "rbxassetid://10722835155", -- Image1 url
+            Image2 = "rbxassetid://11033979445", -- Image2 url
+            Shake = true,
+            Sound1 = {
+                11033979445, -- SoundId
+                { Volume = 0.5 }, -- Sound properties
+            },
+            Sound2 = {
+                6343741731, -- SoundId
+                { Volume = 0.5 }, -- Sound properties
+            },
+            Flashing = {
+                true, -- Enabled
+                Color3.fromRGB(255, 0, 0), -- Color
+            },
+            Tease = {
+                true, -- Enabled ('false' if you don't want tease)
+                Min = 1,
+                Max = 3,
+            },
+        },
+    },
+    CustomDialog = {"You Died To Rush", "He Is A Tricky One.", "When The Lights Flicker", "His Presents Will Be Known", "Hide When The Lights Flicker Or Suffer Your Death."}, -- Custom death message (can be as long as you want)
+})
+
+-----[[ Advanced ]]-----
+entity.Debug.OnEntitySpawned = function(entityModel)
+    print("Entity has spawned:", entityModel)
+end
+
+entity.Debug.OnEntityDespawned = function(entityModel)
+    print("Entity has despawned:", mentityModelodel)
+end
+
+entity.Debug.OnEntityStartMoving = function(entityModel)
+    print("Entity has started moving:", entityModel)
+end
+
+entity.Debug.OnEntityFinishedRebound = function(entityModel)
+    print("Entity finished rebound:", entityModel)
+end
+
+entity.Debug.OnDeath = function()
+    warn("You died.")
+end
+------------------------
+
+-- Run the created entity
+Creator.runEntity(entity)
+end)
+--11546618075
+
+TabSection1:NewButton("A-60", "ButtonInfo", function()
+    local Creator = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors%20Entity%20Spawner/Source.lua"))()
+
+-- Create entity
+
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(102, 255, 250)
+game.Lighting.MainColorCorrection.Contrast = 1
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(3),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+
+local entity = Creator.createEntity({
+    CustomName = "A-60", -- Custom name of your entity
+    Model = "rbxassetid://11546618075", -- Can be GitHub file or rbxassetid
+    Speed = 150, -- Percentage, 100 = default Rush speed
+    DelayTime = 3, -- Time before starting cycles (seconds)
+    HeightOffset = 0,
+    CanKill = false,
+    BreakLights = true,
+    FlickerLights = {
+        true, -- Enabled
+        2.5, -- Time (seconds)
+    },
+    Cycles = {
+        Min = 1,
+        Max = 1,
+        WaitTime = 7,
+    },
+    CamShake = {
+        true, -- Enabled
+        {5, 15, 0.1, 1}, -- Shake values (don't change if you don't know)
+        100, -- Shake start distance (from Entity to you)
+    },
+    Jumpscare = {
+        true, -- Enabled ('false' if you don't want jumpscare)
+        {
+            Image1 = "rbxassetid://10716387808", -- Image1 url
+            Image2 = "rbxassetid://11033979445", -- Image2 url
+            Shake = true,
+            Sound1 = {
+                11033979445, -- SoundId
+                { Volume = 0.5 }, -- Sound properties
+            },
+            Sound2 = {
+                6343741731, -- SoundId
+                { Volume = 0.5 }, -- Sound properties
+            },
+            Flashing = {
+                true, -- Enabled
+                Color3.fromRGB(255, 0, 0), -- Color
+            },
+            Tease = {
+                true, -- Enabled ('false' if you don't want tease)
+                Min = 1,
+                Max = 3,
+            },
+        },
+    },
+    CustomDialog = {"What.. The Heck.. Just Happend?", "I Think Something's Wrong.", "Sorry About That, MidnightCyborg.", "His Presents Will Be Known", }, -- Custom death message (can be as long as you want)
+})
+
+-----[[ Advanced ]]-----
+entity.Debug.OnEntitySpawned = function(entityModel)
+    print("Entity has spawned:", entityModel)
+end
+
+entity.Debug.OnEntityDespawned = function(entityModel)
+    print("Entity has despawned:", mentityModelodel)
+end
+
+entity.Debug.OnEntityStartMoving = function(entityModel)
+    print("Entity has started moving:", entityModel)
+end
+
+entity.Debug.OnEntityFinishedRebound = function(entityModel)
+    print("Entity finished rebound:", entityModel)
+end
+
+entity.Debug.OnDeath = function()
+    warn("You died.")
+end
+------------------------
+
+-- Run the created entity
+Creator.runEntity(entity)
+end)
+
+TabSection1:NewButton("Eyes", "ButtonInfo", function()
+    local Creator = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors%20Entity%20Spawner/Source.lua"))()
+
+-- Create entity
+
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(102, 255, 250)
+game.Lighting.MainColorCorrection.Contrast = 1
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(3),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+
+local entity = Creator.createEntity({
+    CustomName = "Eyes", -- Custom name of your entity
+    Model = "rbxassetid://11546955845", -- Can be GitHub file or rbxassetid
+    Speed = 150, -- Percentage, 100 = default Rush speed
+    DelayTime = 3, -- Time before starting cycles (seconds)
+    HeightOffset = 0,
+    CanKill = false,
+    BreakLights = true,
+    FlickerLights = {
+        true, -- Enabled
+        2.5, -- Time (seconds)
+    },
+    Cycles = {
+        Min = 1,
+        Max = 1,
+        WaitTime = 7,
+    },
+    CamShake = {
+        true, -- Enabled
+        {5, 15, 0.1, 1}, -- Shake values (don't change if you don't know)
+        100, -- Shake start distance (from Entity to you)
+    },
+    Jumpscare = {
+        true, -- Enabled ('false' if you don't want jumpscare)
+        {
+            Image1 = "rbxassetid://10865377903", -- Image1 url
+            Image2 = "rbxassetid://10865377903", -- Image2 url
+            Shake = true,
+            Sound1 = {
+                1168009240, -- SoundId
+                { Volume = 0.5 }, -- Sound properties
+            },
+            Sound2 = {
+                9126213993, -- SoundId
+                { Volume = 0.5 }, -- Sound properties
+            },
+            Flashing = {
+                true, -- Enabled
+                Color3.fromRGB(255, 0, 0), -- Color
+            },
+            Tease = {
+                true, -- Enabled ('false' if you don't want tease)
+                Min = 1,
+                Max = 3,
+            },
+        },
+    },
+    CustomDialog = {"What.. The Heck.. Just Happend?", "I Think Something's Wrong.", "Sorry About That, MidnightCyborg.", "His Presents Will Be Known", }, -- Custom death message (can be as long as you want)
+})
+
+-----[[ Advanced ]]-----
+entity.Debug.OnEntitySpawned = function(entityModel)
+    print("Entity has spawned:", entityModel)
+end
+
+entity.Debug.OnEntityDespawned = function(entityModel)
+    print("Entity has despawned:", mentityModelodel)
+end
+
+entity.Debug.OnEntityStartMoving = function(entityModel)
+    print("Entity has started moving:", entityModel)
+end
+
+entity.Debug.OnEntityFinishedRebound = function(entityModel)
+    print("Entity finished rebound:", entityModel)
+end
+
+entity.Debug.OnDeath = function()
+    warn("You died.")
+end
+------------------------
+
+-- Run the created entity
+Creator.runEntity(entity)
+end)
