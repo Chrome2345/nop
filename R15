@@ -1,0 +1,2583 @@
+
+local num = 0
+local p = game.Players.LocalPlayer
+local char = p.Character
+local rad = math.rad
+local hum = char.Humanoid
+---------------------------------------------------
+local LeftUpperArm = char.LeftUpperArm
+local LeftShoulder = char.LeftUpperArm.LeftShoulder
+local LeftLowerArm = char.LeftLowerArm
+local LeftElbow = char.LeftLowerArm.LeftElbow
+--------------------------------------------------------
+local LeftUpperLeg = char.LeftUpperLeg
+local LeftHip = char.LeftUpperLeg.LeftHip
+local LeftLowerLeg = char.LeftLowerLeg
+local LeftKnee = char.LeftLowerLeg.LeftKnee
+----------------------------------------------------------
+local RightUpperArm = char.RightUpperArm
+local RightShoulder = char.RightUpperArm.RightShoulder
+local RightLowerArm = char.RightLowerArm
+local RightElbow = char.RightLowerArm.RightElbow
+----------------------------------------------------------
+local RightUpperLeg = char.RightUpperLeg
+local RightHip = char.RightUpperLeg.RightHip
+local RightLowerLeg = char.RightLowerLeg
+local RightKnee = char.RightLowerLeg.RightKnee
+----------------------------------------------------------
+local UpperTorso = char.UpperTorso
+local LowerTorso = char.LowerTorso
+local Root = char.LowerTorso.Root
+--------------------------------------------
+local Head = char.Head
+local Neck = char.Head.Neck
+local RootPart = char.HumanoidRootPart
+local LeftHand = char.LeftHand
+local RightHand = char.RightHand
+local LeftFoot = char.LeftFoot
+local RightFoot = char.RightFoot
+local root = char.HumanoidRootPart
+---------------------------------------------
+local debounce = true
+local v3 = Vector3.new
+local ns = NumberSequence.new
+local new = Instance.new
+local nr = NumberRange.new
+local bc =BrickColor.new
+local UpperTorso = char.UpperTorso
+local Waist = char.UpperTorso.Waist
+char:FindFirstChild'Animate':Destroy()
+hum.Animator.Parent = nil
+new("ForceField",char).Visible = false
+ hum:SetStateEnabled("Dead",false)
+hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+idle = true
+walk = true
+walk1 = true
+walkon = true
+walkon1 = false
+local Sprint = false
+local Sit = false
+local Create = LoadLibrary("RbxUtility").Create
+function RemoveOutlines(part)
+	part.TopSurface, part.BottomSurface, part.LeftSurface, part.RightSurface, part.FrontSurface, part.BackSurface = 10, 10, 10, 10, 10, 10
+end
+CFuncs = {	
+	["Part"] = {
+		Create = function(Parent, Material, Reflectance, Transparency, BColor, Name, Size)
+			local Part = Create("Part"){
+				Parent = Parent,
+				Reflectance = Reflectance,
+				Transparency = Transparency,
+				CanCollide = false,
+				Locked = true,
+				BrickColor = BrickColor.new(tostring(BColor)),
+				Name = Name,
+				Size = Size,
+				Material = Material,
+			}
+			RemoveOutlines(Part)
+			return Part
+		end;
+	};
+	
+	["Mesh"] = {
+		Create = function(Mesh, Part, MeshType, MeshId, OffSet, Scale)
+			local Msh = Create(Mesh){
+				Parent = Part,
+				Offset = OffSet,
+				Scale = Scale,
+			}
+			if Mesh == "SpecialMesh" then
+				Msh.MeshType = MeshType
+				Msh.MeshId = MeshId
+			end
+			return Msh
+		end;
+	};
+	
+	["Mesh"] = {
+		Create = function(Mesh, Part, MeshType, MeshId, OffSet, Scale)
+			local Msh = Create(Mesh){
+				Parent = Part,
+				Offset = OffSet,
+				Scale = Scale,
+			}
+			if Mesh == "SpecialMesh" then
+				Msh.MeshType = MeshType
+				Msh.MeshId = MeshId
+			end
+			return Msh
+		end;
+	};
+	
+	["Weld"] = {
+		Create = function(Parent, Part0, Part1, C0, C1)
+			local Weld = Create("Weld"){
+				Parent = Parent,
+				Part0 = Part0,
+				Part1 = Part1,
+				C0 = C0,
+				C1 = C1,
+			}
+			return Weld
+		end;
+	};
+
+	["Sound"] = {
+		Create = function(id, par, vol, pit) 
+			coroutine.resume(coroutine.create(function()
+				local S = Create("Sound"){
+					Volume = vol,
+					Pitch = pit or 1,
+					SoundId = id,
+					Parent = par or workspace,
+				}
+				wait() 
+				S:play() 
+				game:GetService("Debris"):AddItem(S, 6)
+			end))
+		end;
+	};
+	
+	["ParticleEmitter"] = {
+		Create = function(Parent, Color1, Color2, LightEmission, Size, Texture, Transparency, ZOffset, Accel, Drag, LockedToPart, VelocityInheritance, EmissionDirection, Enabled, LifeTime, Rate, Rotation, RotSpeed, Speed, VelocitySpread)
+			local fp = Create("ParticleEmitter"){
+				Parent = Parent,
+				Color = ColorSequence.new(Color1, Color2),
+				LightEmission = LightEmission,
+				Size = Size,
+				Texture = Texture,
+				Transparency = Transparency,
+				ZOffset = ZOffset,
+				Acceleration = Accel,
+				Drag = Drag,
+				LockedToPart = LockedToPart,
+				VelocityInheritance = VelocityInheritance,
+				EmissionDirection = EmissionDirection,
+				Enabled = Enabled,
+				Lifetime = LifeTime,
+				Rate = Rate,
+				Rotation = Rotation,
+				RotSpeed = RotSpeed,
+				Speed = Speed,
+				VelocitySpread = VelocitySpread,
+			}
+			return fp
+		end;
+	};
+
+	CreateTemplate = {
+	
+	};
+}
+function Damage(Part, hit, minim, maxim, knockback, Type, Property, Delay, HitSound, HitPitch)
+	if hit.Parent == nil then
+		return
+	end
+	local h = hit.Parent:FindFirstChild("Humanoid")
+	for _, v in pairs(hit.Parent:children()) do
+		if v:IsA("Humanoid") then
+			h = v
+		end
+	end
+	if h ~= nil and hit.Parent.Name ~= Character.Name and hit.Parent:FindFirstChild("Torso") ~= nil then
+		if hit.Parent:findFirstChild("DebounceHit") ~= nil then
+			if hit.Parent.DebounceHit.Value == true then
+				return
+			end
+		end
+		local c = Create("ObjectValue"){
+			Name = "creator",
+			Value = game:service("Players").LocalPlayer,
+			Parent = h,
+		}
+		game:GetService("Debris"):AddItem(c, .5)
+		if HitSound ~= nil and HitPitch ~= nil then
+			CFuncs.Sound.Create(HitSound, hit, 1, HitPitch) 
+		end
+		local Damage = math.random(minim, maxim)
+		local blocked = false
+		local block = hit.Parent:findFirstChild("Block")
+		if block ~= nil then
+			if block.className == "IntValue" then
+				if block.Value > 0 then
+					blocked = true
+					block.Value = block.Value - 1
+					print(block.Value)
+				end
+			end
+		end
+		if blocked == false then
+			h.Health = h.Health - Damage
+			ShowDamage((Part.CFrame * CFrame.new(0, 0, (Part.Size.Z / 2)).p + Vector3.new(0, 1.5, 0)), -Damage, 1.5, BrickColor.new("Really black").Color)
+		else
+			h.Health = h.Health - (Damage / 2)
+			ShowDamage((Part.CFrame * CFrame.new(0, 0, (Part.Size.Z / 2)).p + Vector3.new(0, 1.5, 0)), -Damage, 1.5, BrickColor.new("Really black").Color)
+		end
+		if Type == "Knockdown" then
+			local hum = hit.Parent.Humanoid
+			hum.PlatformStand = true
+			coroutine.resume(coroutine.create(function(HHumanoid)
+				swait(1)
+				HHumanoid.PlatformStand = false
+			end), hum)
+			local angle = (hit.Position - (Property.Position + Vector3.new(0, 0, 0))).unit
+			local bodvol = Create("BodyVelocity"){
+				velocity = angle * knockback,
+				P = 5000,
+				maxForce = Vector3.new(8e+003, 8e+003, 8e+003),
+				Parent = hit,
+			}
+			local rl = Create("BodyAngularVelocity"){
+				P = 3000,
+				maxTorque = Vector3.new(500000, 500000, 500000) * 50000000000000,
+				angularvelocity = Vector3.new(math.random(-10, 10), math.random(-10, 10), math.random(-10, 10)),
+				Parent = hit,
+			}
+			game:GetService("Debris"):AddItem(bodvol, .5)
+			game:GetService("Debris"):AddItem(rl, .5)
+		elseif Type == "Normal" then
+			local vp = Create("BodyVelocity"){
+				P = 500,
+				maxForce = Vector3.new(math.huge, 0, math.huge),
+				velocity = Property.CFrame.lookVector * knockback + Property.Velocity / 1.05,
+			}
+			if knockback > 0 then
+				vp.Parent = hit.Parent.Torso
+			end
+			game:GetService("Debris"):AddItem(vp, .5)
+		elseif Type == "Up" then
+			local bodyVelocity = Create("BodyVelocity"){
+				velocity = Vector3.new(0, 20, 0),
+				P = 5000,
+				maxForce = Vector3.new(8e+003, 8e+003, 8e+003),
+				Parent = hit,
+			}
+			game:GetService("Debris"):AddItem(bodyVelocity, .5)
+		elseif Type == "DarkUp" then
+			coroutine.resume(coroutine.create(function()
+				for i = 0, 1, 0.1 do
+					swait()
+					Effects.Block.Create(BrickColor.new("Black"), hit.Parent.Torso.CFrame, 5, 5, 5, 1, 1, 1, .08, 1)
+				end
+			end))
+			local bodyVelocity = Create("BodyVelocity"){
+				velocity = Vector3.new(0, 20, 0),
+				P = 5000,
+				maxForce = Vector3.new(8e+003, 8e+003, 8e+003),
+				Parent = hit,
+			}
+			game:GetService("Debris"):AddItem(bodyVelocity, 1)
+		elseif Type == "Snare" then
+			local bp = Create("BodyPosition"){
+				P = 2000,
+				D = 100,
+				maxForce = Vector3.new(math.huge, math.huge, math.huge),
+				position = hit.Parent.Torso.Position,
+				Parent = hit.Parent.Torso,
+			}
+			game:GetService("Debris"):AddItem(bp, 1)
+		elseif Type == "Freeze" then
+			local BodPos = Create("BodyPosition"){
+				P = 50000,
+				D = 1000,
+				maxForce = Vector3.new(math.huge, math.huge, math.huge),
+				position = hit.Parent.Torso.Position,
+				Parent = hit.Parent.Torso,
+			}
+			local BodGy = Create("BodyGyro") {
+				maxTorque = Vector3.new(4e+005, 4e+005, 4e+005) * math.huge ,
+				P = 20e+003,
+				Parent = hit.Parent.Torso,
+				cframe = hit.Parent.Torso.CFrame,
+			}
+			hit.Parent.Torso.Anchored = true
+			coroutine.resume(coroutine.create(function(Part) 
+				swait(1.5)
+				Part.Anchored = false
+			end), hit.Parent.Torso)
+			game:GetService("Debris"):AddItem(BodPos, 3)
+			game:GetService("Debris"):AddItem(BodGy, 3)
+		end
+		local debounce = Create("BoolValue"){
+			Name = "DebounceHit",
+			Parent = hit.Parent,
+			Value = true,
+		}
+		game:GetService("Debris"):AddItem(debounce, Delay)
+		c = Create("ObjectValue"){
+			Name = "creator",
+			Value = Player,
+			Parent = h,
+		}
+		game:GetService("Debris"):AddItem(c, .5)
+	end
+end
+
+function ShowDamage(Pos, Text, Time, Color)
+	local Rate = (1 / 30)
+	local Pos = (Pos or Vector3.new(0, 0, 0))
+	local Text = (Text or "")
+	local Time = (Time or 2)
+	local Color = (Color or Color3.new(1, 0, 1))
+	local EffectPart = CFuncs.Part.Create(workspace, "SmoothPlastic", 0, 1, BrickColor.new(Color), "Effect", Vector3.new(0, 0, 0))
+	EffectPart.Anchored = true
+	local BillboardGui = Create("BillboardGui"){
+		Size = UDim2.new(3, 0, 3, 0),
+		Adornee = EffectPart,
+		Parent = EffectPart,
+	}
+	local TextLabel = Create("TextLabel"){
+		BackgroundTransparency = 1,
+		Size = UDim2.new(1, 0, 1, 0),
+		Text = Text,
+		Font = "SciFi",
+		TextColor3 = Color,
+		TextScaled = true,
+		Parent = BillboardGui,
+	}
+	game.Debris:AddItem(EffectPart, (Time))
+	EffectPart.Parent = game:GetService("Workspace")
+	delay(0, function()
+		local Frames = (Time / Rate)
+		for Frame = 1, Frames do
+			wait(Rate)
+			local Percent = (Frame / Frames)
+			EffectPart.CFrame = CFrame.new(Pos) + Vector3.new(0, Percent, 0)
+			TextLabel.TextTransparency = Percent
+		end
+		if EffectPart and EffectPart.Parent then
+			EffectPart:Destroy()
+		end
+	end)
+end
+
+function MagnitudeDamage(Part, Magnitude, MinimumDamage, MaximumDamage, KnockBack, Type, HitSound, HitPitch)
+	for _, c in pairs(workspace:children()) do
+		local hum = c:findFirstChild("Humanoid")
+		if hum ~= nil then
+			local head = c:findFirstChild("Torso")
+			if head ~= nil then
+				local targ = head.Position - Part.Position
+				local mag = targ.magnitude
+				if mag <= Magnitude and c.Name ~= Player.Name then 
+					Damage(head, head, MinimumDamage, MaximumDamage, KnockBack, Type, RootPart, .1, "rbxassetid://" .. HitSound, HitPitch)
+				end
+			end
+		end
+	end
+end
+
+EffectModel = Create("Model"){
+	Parent = Character,
+	Name = "Effects",
+}
+
+game:service'RunService'.RenderStepped:connect(function()
+     
+if hum.MoveDirection.x == 0 and idle == true then
+ 
+      LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(0), math.rad(0), math.rad(-20)),.1) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(90),rad(0),rad(30)),.1)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(90),rad(0),rad(0)),.1)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(7.792), math.rad(55.176), math.rad(-7.907)),.3)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(10.643), math.rad(4.068), math.rad(0)),.3)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-7.678),rad(0),rad(0)),.3)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-24.236),rad(0),rad(0)),.3)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(0),rad(-83.022),rad(0)),.1)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(49.733),rad(0)),.1)--Head
+          Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(0), math.rad(-10.469), math.rad(0), 0),.2)--UpperTorso
+     RightHand.RightWrist.C0 = RightHand.RightWrist.C0:lerp(CFrame.new( RightHand.RightWrist.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--Head
+  wait()
+
+end
+     if hum.MoveDirection.x == 0 and Sprint == true then
+      
+   LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(39.591), math.rad(0), math.rad(0)),.1) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(0), math.rad(0), math.rad(23.09)),.1)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(32.429),rad(0),rad(0)),.1)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(0), math.rad(0), math.rad(-24.752)),.1)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(78.495), math.rad(0), math.rad(0)),.1)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-83.308),rad(0),rad(0)),.1)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(math.rad(-80.214),rad(0),rad(0)),.1)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,-0.6,0)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(math.rad(30.138), math.rad(17.418), math.rad(-6.933)),.1)--Head
+     Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(-30.367), math.rad(-11.173), 0),.2)--UpperTorso
+end
+    if walkon1 == true then
+    
+			walkon1 = false
+		for i = 1,7 do
+if hum.MoveDirection.x > 0 and Sprint == true or hum.MoveDirection.x < 0 and Sprint == true then
+Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(0,rad(10),0),.1)--LowerTorso
+			Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(-26.356), math.rad(13.063), 0),.15)--UpperTorso
+			Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(math.rad(23.491), math.rad(-6.646), 0),.18) --Head
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(0), math.rad(-70), math.rad(0)),.15)--RightUpperArm
+ RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(math.rad(0), 0, 0),.15)--RightLowerArm
+  LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(17.704), 0, math.rad(-10.088)),.15) --LeftUpperArm
+  LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(math.rad(0), 0, 0),.15)--LeftLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(-25.153), 0, 0),.15)--LeftUpperLeg
+ LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(math.rad(-20.97), 0, 0),.15)--LeftLowerLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(38.445), 0, 0),.15)--RightUpperLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(math.rad(-16.387), 0, 0),.15)--RightLowerLeg
+  wait()
+
+
+end
+        end
+
+
+for i = 1,7 do
+	if hum.MoveDirection.x > 0 and Sprint == true or hum.MoveDirection.x < 0 and Sprint == true then
+   Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(0,rad(10),0),.1)--LowerTorso
+			Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(-26.356), math.rad(13.063), 0),.15)--UpperTorso
+			Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(math.rad(23.491), math.rad(-6.646), 0),.18) --Head
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(0), math.rad(-70), math.rad(0)),.15)--RightUpperArm
+ RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(math.rad(0), 0, 0),.15)--RightLowerArm
+  LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(17.704), 0, math.rad(-10.088)),.15) --LeftUpperArm
+  LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(math.rad(0), 0, 0),.15)--LeftLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(40.909), 0, 0),.15)--LeftUpperLeg
+ LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(math.rad(-5.5), 0, 0),.15)--LeftLowerLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(-61.826), 0, 0),.15)--RightUpperLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(math.rad(-36.387), 0, 0),.15)--RightLowerLeg
+  wait()
+
+
+end	
+
+        end
+walkon1 = true
+end	
+if walkon == true then
+    
+			walkon = false
+		for i = 1,11 do
+				if hum.MoveDirection.x > 0 and idle == true or hum.MoveDirection.x < 0 and idle == true then
+Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(0,rad(10),0),.1)--LowerTorso
+			Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(0), math.rad(0), 0),.15)--UpperTorso
+			Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(0,0,0),.18) --Head
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(90),rad(0),rad(30)),.15)--RightUpperArm
+ RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(math.rad(90), 0, 0),.15)--RightLowerArm
+  LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(17.704), 0, math.rad(-10.088)),.15) --LeftUpperArm
+  LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(math.rad(20), 0, 0),.15)--LeftLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(-23.835), math.rad(-0.057), math.rad(0.286)),.15)--LeftUpperLeg
+ LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(math.rad(-20.283), 0, 0),.15)--LeftLowerLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(61.826), math.rad(2.578), math.rad(-0.859)),.15)--RightUpperLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(math.rad(-36.387), 0, 0),.15)--RightLowerLeg
+  wait()
+
+
+end
+        end
+
+
+for i = 1,11 do
+	if hum.MoveDirection.x > 0 and idle == true or hum.MoveDirection.x < 0 and idle == true then
+      
+   Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(0,rad(-10),0),.15)--LowerTorso
+			Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(0), math.rad(0), 0),.15)--UpperTorso
+			Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(0,0,0),.5) --Head
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(90),rad(0),rad(30)),.15)--RightUpperArm
+ RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(math.rad(90), 0, 0),.15)--RightLowerArm
+  LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(-34.263), 0, math.rad(-10.088)),.15) --LeftUpperArm
+  LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(math.rad(0), 0, 0),.15)--LeftLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(39.763), math.rad(0.229), math.rad(0.172)),.15)--LeftUpperLeg
+ LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(math.rad(-6.589), 0, 0),.15)--LeftLowerLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(-15.511), math.rad(2.349), math.rad(1.375)),.15)--RightUpperLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(math.rad(0), 0, 0),.15)--RightLowerLeg
+  wait()
+
+
+end	
+
+        end
+walkon = true
+end	
+	end)	
+
+hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+
+
+
+local lp = game.Players.LocalPlayer
+local chr = lp.Character
+local mouse = lp:GetMouse()
+local euler = CFrame.fromEulerAnglesXYZ
+local rad = math.rad
+local trso = chr.UpperTorso
+ 
+local ContentProvider = Game:GetService("ContentProvider")
+ 
+local function LoadAssets(AssetList)
+        -- Takes an asset list and preloads it. Will not wait for them to load.
+ 
+        for _, AssetId in pairs(AssetList) do
+                ContentProvider:Preload("http://www.roblox.com/asset/?id=" .. AssetId)
+        end
+end
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+for i,v in pairs(chr:children()) do
+        if v.ClassName == "Hat" then
+                print(v.Name.." has been removed, #baldforbieber")
+                v:destroy()
+        end
+end
+ 
+hum = chr.Humanoid
+ 
+function CreateMesh(parent, id, x, y, z, texture)
+local m=Instance.new("SpecialMesh", parent)
+m.MeshType = "FileMesh"
+m.MeshId="http://www.roblox.com/asset/?id="..id
+if texture ~= nil then
+m.TextureId="http://www.roblox.com/asset/?id="..texture
+end
+m.Scale = Vector3.new(x,y,z)
+end
+ 
+ 
+for i,v in pairs(chr:children()) do
+        if v.ClassName == "Hat" then
+                print(v.Name.." has been removed, #baldforbieber")
+                v:destroy()
+        end
+end
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+
+ 
+ 
+ 
+ 
+--Converted with ttyyuu12345's model to script plugin v4
+function sandbox(var,func)
+	local env = getfenv(func)
+	local newenv = setmetatable({},{
+		__index = function(self,k)
+			if k=="script" then
+				return var
+			else
+				return env[k]
+			end
+		end,
+	})
+	setfenv(func,newenv)
+	return func
+end
+cors = {}
+
+mas = Instance.new("Model",game:GetService("Lighting"))
+
+Part0 = Instance.new("Part")
+CylinderMesh1 = Instance.new("CylinderMesh")
+Part2 = Instance.new("Part")
+BlockMesh3 = Instance.new("BlockMesh")
+Part4 = Instance.new("Part")
+BlockMesh5 = Instance.new("BlockMesh")
+Part6 = Instance.new("Part")
+BlockMesh7 = Instance.new("BlockMesh")
+Part8 = Instance.new("Part")
+CylinderMesh9 = Instance.new("CylinderMesh")
+Part10 = Instance.new("Part")
+CylinderMesh11 = Instance.new("CylinderMesh")
+Part12 = Instance.new("Part")
+BlockMesh13 = Instance.new("BlockMesh")
+Part14 = Instance.new("Part")
+BlockMesh15 = Instance.new("BlockMesh")
+Part16 = Instance.new("Part")
+Part17 = Instance.new("Part")
+BlockMesh18 = Instance.new("BlockMesh")
+Part19 = Instance.new("Part")
+BlockMesh20 = Instance.new("BlockMesh")
+Part21 = Instance.new("Part")
+CylinderMesh22 = Instance.new("CylinderMesh")
+Part23 = Instance.new("Part")
+BlockMesh24 = Instance.new("BlockMesh")
+Part25 = Instance.new("Part")
+BlockMesh26 = Instance.new("BlockMesh")
+Part27 = Instance.new("Part")
+BlockMesh28 = Instance.new("BlockMesh")
+Part29 = Instance.new("Part")
+BlockMesh30 = Instance.new("BlockMesh")
+Part31 = Instance.new("Part")
+CylinderMesh32 = Instance.new("CylinderMesh")
+Part33 = Instance.new("Part")
+BlockMesh34 = Instance.new("BlockMesh")
+Part35 = Instance.new("Part")
+BlockMesh36 = Instance.new("BlockMesh")
+Part37 = Instance.new("Part")
+BlockMesh38 = Instance.new("BlockMesh")
+Part39 = Instance.new("Part")
+CylinderMesh40 = Instance.new("CylinderMesh")
+Part41 = Instance.new("Part")
+CylinderMesh42 = Instance.new("CylinderMesh")
+Part43 = Instance.new("Part")
+BlockMesh44 = Instance.new("BlockMesh")
+Part45 = Instance.new("Part")
+BlockMesh46 = Instance.new("BlockMesh")
+Part47 = Instance.new("Part")
+ParticleEmitter48 = Instance.new("ParticleEmitter")
+ParticleEmitter49 = Instance.new("ParticleEmitter")
+Part50 = Instance.new("Part")
+BlockMesh51 = Instance.new("BlockMesh")
+Part52 = Instance.new("Part")
+BlockMesh53 = Instance.new("BlockMesh")
+Part54 = Instance.new("Part")
+BlockMesh55 = Instance.new("BlockMesh")
+Part56 = Instance.new("Part")
+CylinderMesh57 = Instance.new("CylinderMesh")
+Part58 = Instance.new("Part")
+BlockMesh59 = Instance.new("BlockMesh")
+Part60 = Instance.new("Part")
+BlockMesh61 = Instance.new("BlockMesh")
+Part62 = Instance.new("Part")
+BlockMesh63 = Instance.new("BlockMesh")
+Part64 = Instance.new("Part")
+CylinderMesh65 = Instance.new("CylinderMesh")
+Part66 = Instance.new("Part")
+CylinderMesh67 = Instance.new("CylinderMesh")
+Part68 = Instance.new("Part")
+BlockMesh69 = Instance.new("BlockMesh")
+Part70 = Instance.new("Part")
+BlockMesh71 = Instance.new("BlockMesh")
+Part72 = Instance.new("Part")
+BlockMesh73 = Instance.new("BlockMesh")
+Part74 = Instance.new("Part")
+BlockMesh75 = Instance.new("BlockMesh")
+Part76 = Instance.new("Part")
+BlockMesh77 = Instance.new("BlockMesh")
+Part78 = Instance.new("Part")
+BlockMesh79 = Instance.new("BlockMesh")
+Part80 = Instance.new("Part")
+CylinderMesh81 = Instance.new("CylinderMesh")
+Part82 = Instance.new("Part")
+BlockMesh83 = Instance.new("BlockMesh")
+Part84 = Instance.new("Part")
+BlockMesh85 = Instance.new("BlockMesh")
+Part86 = Instance.new("Part")
+BlockMesh87 = Instance.new("BlockMesh")
+Part88 = Instance.new("Part")
+BlockMesh89 = Instance.new("BlockMesh")
+Weld90 = Instance.new("Weld")
+Weld91 = Instance.new("Weld")
+Weld92 = Instance.new("Weld")
+Weld93 = Instance.new("Weld")
+Weld94 = Instance.new("Weld")
+Weld95 = Instance.new("Weld")
+Weld96 = Instance.new("Weld")
+Weld97 = Instance.new("Weld")
+Weld98 = Instance.new("Weld")
+Weld99 = Instance.new("Weld")
+Weld100 = Instance.new("Weld")
+Weld101 = Instance.new("Weld")
+Weld102 = Instance.new("Weld")
+Weld103 = Instance.new("Weld")
+Weld104 = Instance.new("Weld")
+Weld105 = Instance.new("Weld")
+Weld106 = Instance.new("Weld")
+Weld107 = Instance.new("Weld")
+Weld108 = Instance.new("Weld")
+Weld109 = Instance.new("Weld")
+Weld110 = Instance.new("Weld")
+Weld111 = Instance.new("Weld")
+Weld112 = Instance.new("Weld")
+Weld113 = Instance.new("Weld")
+Weld114 = Instance.new("Weld")
+Weld115 = Instance.new("Weld")
+Weld116 = Instance.new("Weld")
+Weld117 = Instance.new("Weld")
+Weld118 = Instance.new("Weld")
+Weld119 = Instance.new("Weld")
+Weld120 = Instance.new("Weld")
+Weld121 = Instance.new("Weld")
+Weld122 = Instance.new("Weld")
+Weld123 = Instance.new("Weld")
+Weld124 = Instance.new("Weld")
+Weld125 = Instance.new("Weld")
+Weld126 = Instance.new("Weld")
+Weld127 = Instance.new("Weld")
+Weld128 = Instance.new("Weld")
+Weld129 = Instance.new("Weld")
+Weld130 = Instance.new("Weld")
+Weld131 = Instance.new("Weld")
+Weld132 = Instance.new("Weld")
+Weld133 = Instance.new("Weld")
+Weld134 = Instance.new("Weld")
+Weld135 = Instance.new("Weld")
+Weld136 = Instance.new("Weld")
+Part0.Name = "Neon"
+Part0.Parent = mas
+Part0.Material = Enum.Material.Neon
+Part0.BrickColor = BrickColor.new("Institutional white")
+Part0.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part0.CanCollide = false
+Part0.FormFactor = Enum.FormFactor.Custom
+Part0.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part0.CFrame = CFrame.new(66.5923615, 2.84241295, 149.645615, -0.0800137818, 0.990969062, -0.107606776, -0.995200157, -0.07331682, 0.0648248196, 0.05635003, 0.11227718, 0.992078364)
+Part0.BottomSurface = Enum.SurfaceType.Smooth
+Part0.TopSurface = Enum.SurfaceType.Smooth
+Part0.Color = Color3.new(0.972549, 0.972549, 0.972549)
+Part0.Position = Vector3.new(66.5923615, 2.84241295, 149.645615)
+Part0.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part0.Color = Color3.new(0.972549, 0.972549, 0.972549)
+CylinderMesh1.Parent = Part0
+CylinderMesh1.Scale = Vector3.new(0.300000012, 1, 1)
+CylinderMesh1.Scale = Vector3.new(0.300000012, 1, 1)
+Part2.Parent = mas
+Part2.Material = Enum.Material.Metal
+Part2.BrickColor = BrickColor.new("Fossil")
+Part2.Rotation = Vector3.new(-3.74000001, -6.17999983, -49.6199989)
+Part2.CanCollide = false
+Part2.FormFactor = Enum.FormFactor.Custom
+Part2.Size = Vector3.new(0.200000003, 0.200000003, 1.4000001)
+Part2.CFrame = CFrame.new(66.6264191, 2.84253883, 149.598846, 0.644143581, 0.757297814, -0.107611373, -0.755554676, 0.651871264, 0.0648229793, 0.119239129, 0.0395509787, 0.992078125)
+Part2.BottomSurface = Enum.SurfaceType.Smooth
+Part2.TopSurface = Enum.SurfaceType.Smooth
+Part2.Color = Color3.new(0.623529, 0.631373, 0.67451)
+Part2.Position = Vector3.new(66.6264191, 2.84253883, 149.598846)
+Part2.Orientation = Vector3.new(-3.72000003, -6.19000006, -49.2099991)
+Part2.Color = Color3.new(0.623529, 0.631373, 0.67451)
+BlockMesh3.Parent = Part2
+BlockMesh3.Scale = Vector3.new(0.200000003, 0.200000003, 0.930000007)
+BlockMesh3.Scale = Vector3.new(0.200000003, 0.200000003, 0.930000007)
+Part4.Name = "Neon"
+Part4.Parent = mas
+Part4.Material = Enum.Material.Neon
+Part4.BrickColor = BrickColor.new("Ghost grey")
+Part4.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part4.CanCollide = false
+Part4.FormFactor = Enum.FormFactor.Custom
+Part4.Size = Vector3.new(0.599999964, 0.200000003, 1)
+Part4.CFrame = CFrame.new(66.0177994, 3.25248265, 149.506042, 0.990969002, 0.0800166354, -0.107606255, -0.0733194798, 0.99519974, 0.0648291558, 0.112277165, -0.0563540943, 0.992078424)
+Part4.BottomSurface = Enum.SurfaceType.Smooth
+Part4.TopSurface = Enum.SurfaceType.Smooth
+Part4.Color = Color3.new(0.792157, 0.796079, 0.819608)
+Part4.Position = Vector3.new(66.0177994, 3.25248265, 149.506042)
+Part4.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part4.Color = Color3.new(0.792157, 0.796079, 0.819608)
+BlockMesh5.Parent = Part4
+BlockMesh5.Scale = Vector3.new(1.10000002, 0.300000012, 1.04999995)
+BlockMesh5.Scale = Vector3.new(1.10000002, 0.300000012, 1.04999995)
+Part6.Parent = mas
+Part6.Material = Enum.Material.Metal
+Part6.BrickColor = BrickColor.new("Fossil")
+Part6.Rotation = Vector3.new(-3.74000001, -6.17999983, -49.6199989)
+Part6.CanCollide = false
+Part6.FormFactor = Enum.FormFactor.Custom
+Part6.Size = Vector3.new(0.200000003, 0.200000003, 1.4000001)
+Part6.CFrame = CFrame.new(66.9361725, 3.59668303, 149.583252, 0.644143879, 0.757297873, -0.107611418, -0.755554855, 0.651871204, 0.0648230091, 0.119239166, 0.0395509861, 0.992078364)
+Part6.BottomSurface = Enum.SurfaceType.Smooth
+Part6.TopSurface = Enum.SurfaceType.Smooth
+Part6.Color = Color3.new(0.623529, 0.631373, 0.67451)
+Part6.Position = Vector3.new(66.9361725, 3.59668303, 149.583252)
+Part6.Orientation = Vector3.new(-3.72000003, -6.19000006, -49.2099991)
+Part6.Color = Color3.new(0.623529, 0.631373, 0.67451)
+BlockMesh7.Parent = Part6
+BlockMesh7.Scale = Vector3.new(0.200000003, 0.200000003, 1)
+BlockMesh7.Scale = Vector3.new(0.200000003, 0.200000003, 1)
+Part8.Name = "Neon"
+Part8.Parent = mas
+Part8.Material = Enum.Material.Neon
+Part8.BrickColor = BrickColor.new("Hot pink")
+Part8.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part8.CanCollide = false
+Part8.FormFactor = Enum.FormFactor.Custom
+Part8.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part8.CFrame = CFrame.new(66.5720825, 2.68773127, 149.724014, -0.0800136328, 0.99096936, -0.107606798, -0.995200336, -0.0733169094, 0.0648248345, 0.0563500635, 0.112277232, 0.992078781)
+Part8.BottomSurface = Enum.SurfaceType.Smooth
+Part8.TopSurface = Enum.SurfaceType.Smooth
+Part8.Color = Color3.new(1, 0, 0.74902)
+Part8.Position = Vector3.new(66.5720825, 2.68773127, 149.724014)
+Part8.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part8.Color = Color3.new(1, 0, 0.74902)
+CylinderMesh9.Parent = Part8
+CylinderMesh9.Scale = Vector3.new(0.600000024, 1, 1)
+CylinderMesh9.Scale = Vector3.new(0.600000024, 1, 1)
+Part10.Name = "Neon"
+Part10.Parent = mas
+Part10.Material = Enum.Material.Neon
+Part10.BrickColor = BrickColor.new("Cyan")
+Part10.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part10.CanCollide = false
+Part10.FormFactor = Enum.FormFactor.Custom
+Part10.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part10.CFrame = CFrame.new(66.6011581, 3.0353775, 149.694351, -0.0800136328, 0.99096936, -0.107606798, -0.995200336, -0.0733169094, 0.0648248345, 0.0563500635, 0.112277232, 0.992078781)
+Part10.BottomSurface = Enum.SurfaceType.Smooth
+Part10.TopSurface = Enum.SurfaceType.Smooth
+Part10.Color = Color3.new(0.0156863, 0.686275, 0.92549)
+Part10.Position = Vector3.new(66.6011581, 3.0353775, 149.694351)
+Part10.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part10.Color = Color3.new(0.0156863, 0.686275, 0.92549)
+CylinderMesh11.Parent = Part10
+CylinderMesh11.Scale = Vector3.new(0.400000006, 1, 1)
+CylinderMesh11.Scale = Vector3.new(0.400000006, 1, 1)
+Part12.Name = "Neon"
+Part12.Parent = mas
+Part12.Material = Enum.Material.Neon
+Part12.BrickColor = BrickColor.new("Ghost grey")
+Part12.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part12.CanCollide = false
+Part12.FormFactor = Enum.FormFactor.Custom
+Part12.Size = Vector3.new(0.439999968, 0.200000003, 1)
+Part12.CFrame = CFrame.new(66.5046921, 3.3566277, 149.552063, 0.990969121, 0.0800166354, -0.107606269, -0.0733194798, 0.995199919, 0.0648291633, 0.112277173, -0.056354098, 0.992078543)
+Part12.BottomSurface = Enum.SurfaceType.Smooth
+Part12.TopSurface = Enum.SurfaceType.Smooth
+Part12.Color = Color3.new(0.792157, 0.796079, 0.819608)
+Part12.Position = Vector3.new(66.5046921, 3.3566277, 149.552063)
+Part12.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part12.Color = Color3.new(0.792157, 0.796079, 0.819608)
+BlockMesh13.Parent = Part12
+BlockMesh13.Scale = Vector3.new(1.14999998, 0.699999988, 1.04999995)
+BlockMesh13.Scale = Vector3.new(1.14999998, 0.699999988, 1.04999995)
+Part14.Parent = mas
+Part14.Material = Enum.Material.Metal
+Part14.BrickColor = BrickColor.new("Black")
+Part14.Rotation = Vector3.new(-3.74000001, -6.17999983, -49.6199989)
+Part14.CanCollide = false
+Part14.FormFactor = Enum.FormFactor.Custom
+Part14.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part14.CFrame = CFrame.new(66.8715439, 3.63558054, 150.178528, 0.644143879, 0.757297873, -0.107611418, -0.755554855, 0.651871204, 0.0648230091, 0.119239166, 0.0395509861, 0.992078364)
+Part14.BottomSurface = Enum.SurfaceType.Smooth
+Part14.TopSurface = Enum.SurfaceType.Smooth
+Part14.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part14.Position = Vector3.new(66.8715439, 3.63558054, 150.178528)
+Part14.Orientation = Vector3.new(-3.72000003, -6.19000006, -49.2099991)
+Part14.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh15.Parent = Part14
+BlockMesh15.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+BlockMesh15.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+Part16.Name = "Middle"
+wristw = Instance.new("Weld",Part16)
+wristw.Part0=Part16
+wristw.Part1=chr['LeftLowerArm']
+wristw.C0=CFrame.new(0,0,-0.1)
+wristw.C1=euler(rad(0),rad(180),rad(0))
+
+Part16.Parent = mas
+Part16.Material = Enum.Material.SmoothPlastic
+Part16.BrickColor = BrickColor.new("Bright orange")
+Part16.Transparency = 1
+Part16.Rotation = Vector3.new(-1.00999999, -1.00999999, -0.0199999996)
+Part16.CanCollide = false
+Part16.FormFactor = Enum.FormFactor.Symmetric
+Part16.Size = Vector3.new(1, 2, 1)
+Part16.CFrame = CFrame.new(66.0806274, 3.00788403, 149.629425, 0.999844968, 0.000310900097, -0.0176082551, 0, 0.999844253, 0.0176537409, 0.0176110007, -0.0176510047, 0.999689102)
+Part16.BottomSurface = Enum.SurfaceType.Smooth
+Part16.TopSurface = Enum.SurfaceType.Smooth
+Part16.Color = Color3.new(0.854902, 0.521569, 0.254902)
+Part16.Position = Vector3.new(66.0806274, 3.00788403, 149.629425)
+Part16.Orientation = Vector3.new(-1.00999999, -1.00999999, 0)
+Part16.Color = Color3.new(0.854902, 0.521569, 0.254902)
+Part17.Parent = mas
+Part17.Material = Enum.Material.Metal
+Part17.BrickColor = BrickColor.new("Black")
+Part17.Rotation = Vector3.new(-3.74000001, -6.17999983, -64.6199951)
+Part17.CanCollide = false
+Part17.FormFactor = Enum.FormFactor.Custom
+Part17.Size = Vector3.new(0.200000003, 0.400000006, 0.200000003)
+Part17.CFrame = CFrame.new(66.8333282, 2.86680555, 149.014938, 0.42618975, 0.898211658, -0.107608683, -0.89852792, 0.43410489, 0.0648239553, 0.104939148, 0.0690620914, 0.992078483)
+Part17.BottomSurface = Enum.SurfaceType.Smooth
+Part17.TopSurface = Enum.SurfaceType.Smooth
+Part17.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part17.Position = Vector3.new(66.8333282, 2.86680555, 149.014938)
+Part17.Orientation = Vector3.new(-3.72000003, -6.19000006, -64.2099991)
+Part17.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh18.Parent = Part17
+BlockMesh18.Scale = Vector3.new(0.5, 1, 0.400000006)
+BlockMesh18.Scale = Vector3.new(0.5, 1, 0.400000006)
+Part19.Parent = mas
+Part19.Material = Enum.Material.Metal
+Part19.BrickColor = BrickColor.new("Black")
+Part19.Rotation = Vector3.new(-3.74000001, -6.17999983, 10.3800001)
+Part19.CanCollide = false
+Part19.FormFactor = Enum.FormFactor.Custom
+Part19.Size = Vector3.new(0.200000003, 0.600000024, 0.200000003)
+Part19.CFrame = CFrame.new(66.5055923, 3.12720251, 150.171936, 0.977912366, -0.179188758, -0.107612357, 0.186752722, 0.980266809, 0.0648240075, 0.0938730761, -0.0834891349, 0.992078066)
+Part19.BottomSurface = Enum.SurfaceType.Smooth
+Part19.TopSurface = Enum.SurfaceType.Smooth
+Part19.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part19.Position = Vector3.new(66.5055923, 3.12720251, 150.171936)
+Part19.Orientation = Vector3.new(-3.72000003, -6.19000006, 10.79)
+Part19.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh20.Parent = Part19
+BlockMesh20.Scale = Vector3.new(0.5, 0.899999976, 0.400000006)
+BlockMesh20.Scale = Vector3.new(0.5, 0.899999976, 0.400000006)
+Part21.Name = "Neon"
+Part21.Parent = mas
+Part21.Material = Enum.Material.Neon
+Part21.BrickColor = BrickColor.new("Institutional white")
+Part21.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part21.CanCollide = false
+Part21.FormFactor = Enum.FormFactor.Custom
+Part21.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part21.CFrame = CFrame.new(66.5561447, 2.77036667, 149.918427, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part21.BottomSurface = Enum.SurfaceType.Smooth
+Part21.TopSurface = Enum.SurfaceType.Smooth
+Part21.Color = Color3.new(0.972549, 0.972549, 0.972549)
+Part21.Position = Vector3.new(66.5561447, 2.77036667, 149.918427)
+Part21.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part21.Color = Color3.new(0.972549, 0.972549, 0.972549)
+CylinderMesh22.Parent = Part21
+Part23.Parent = mas
+Part23.Material = Enum.Material.Metal
+Part23.BrickColor = BrickColor.new("Black")
+Part23.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part23.CanCollide = false
+Part23.FormFactor = Enum.FormFactor.Custom
+Part23.Size = Vector3.new(0.799999952, 0.939999998, 1)
+Part23.CFrame = CFrame.new(66.0880737, 2.8869009, 149.537567, 0.990969241, 0.0800166354, -0.107606277, -0.0733195469, 0.995200098, 0.0648291782, 0.112277173, -0.0563541092, 0.992078543)
+Part23.BottomSurface = Enum.SurfaceType.Smooth
+Part23.TopSurface = Enum.SurfaceType.Smooth
+Part23.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part23.Position = Vector3.new(66.0880737, 2.8869009, 149.537567)
+Part23.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part23.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh24.Parent = Part23
+BlockMesh24.Scale = Vector3.new(1.03999996, 1, 1.03999996)
+BlockMesh24.Scale = Vector3.new(1.03999996, 1, 1.03999996)
+Part25.Parent = mas
+Part25.Material = Enum.Material.Metal
+Part25.BrickColor = BrickColor.new("Fossil")
+Part25.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part25.CanCollide = false
+Part25.FormFactor = Enum.FormFactor.Custom
+Part25.Size = Vector3.new(0.400000006, 0.800000012, 1.39999998)
+Part25.CFrame = CFrame.new(66.4789124, 2.78788996, 149.586411, 0.990969241, 0.0800166354, -0.107606277, -0.0733195469, 0.995200098, 0.0648291782, 0.112277173, -0.0563541092, 0.992078543)
+Part25.BottomSurface = Enum.SurfaceType.Smooth
+Part25.TopSurface = Enum.SurfaceType.Smooth
+Part25.Color = Color3.new(0.623529, 0.631373, 0.67451)
+Part25.Position = Vector3.new(66.4789124, 2.78788996, 149.586411)
+Part25.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part25.Color = Color3.new(0.623529, 0.631373, 0.67451)
+BlockMesh26.Parent = Part25
+BlockMesh26.Scale = Vector3.new(1, 1, 0.850000024)
+BlockMesh26.Scale = Vector3.new(1, 1, 0.850000024)
+Part27.Parent = mas
+Part27.Material = Enum.Material.Metal
+Part27.BrickColor = BrickColor.new("Black")
+Part27.Rotation = Vector3.new(-3.74000001, -6.17999983, -124.619995)
+Part27.CanCollide = false
+Part27.FormFactor = Enum.FormFactor.Custom
+Part27.Size = Vector3.new(0.200000003, 0.400000006, 0.200000003)
+Part27.CFrame = CFrame.new(66.6218414, 2.41651511, 150.230927, -0.564779282, 0.818196774, -0.107611381, -0.825209796, -0.561096728, 0.0648149326, -0.00734899752, 0.125408128, 0.9920789)
+Part27.BottomSurface = Enum.SurfaceType.Smooth
+Part27.TopSurface = Enum.SurfaceType.Smooth
+Part27.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part27.Position = Vector3.new(66.6218414, 2.41651511, 150.230927)
+Part27.Orientation = Vector3.new(-3.72000003, -6.19000006, -124.209999)
+Part27.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh28.Parent = Part27
+BlockMesh28.Scale = Vector3.new(0.5, 1, 0.400000006)
+BlockMesh28.Scale = Vector3.new(0.5, 1, 0.400000006)
+Part29.Parent = mas
+Part29.Material = Enum.Material.Metal
+Part29.BrickColor = BrickColor.new("Black")
+Part29.Rotation = Vector3.new(-3.74000001, -6.17999983, -64.6199951)
+Part29.CanCollide = false
+Part29.FormFactor = Enum.FormFactor.Custom
+Part29.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part29.CFrame = CFrame.new(66.8414001, 3.01094747, 150.215927, 0.42618975, 0.898211658, -0.107608683, -0.89852792, 0.43410489, 0.0648239553, 0.104939148, 0.0690620914, 0.992078483)
+Part29.BottomSurface = Enum.SurfaceType.Smooth
+Part29.TopSurface = Enum.SurfaceType.Smooth
+Part29.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part29.Position = Vector3.new(66.8414001, 3.01094747, 150.215927)
+Part29.Orientation = Vector3.new(-3.72000003, -6.19000006, -64.2099991)
+Part29.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh30.Parent = Part29
+BlockMesh30.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+BlockMesh30.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+Part31.Name = "Neon"
+Part31.Parent = mas
+Part31.Material = Enum.Material.Neon
+Part31.BrickColor = BrickColor.new("Hot pink")
+Part31.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part31.CanCollide = false
+Part31.FormFactor = Enum.FormFactor.Custom
+Part31.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part31.CFrame = CFrame.new(66.6014023, 2.57610869, 149.391815, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part31.BottomSurface = Enum.SurfaceType.Smooth
+Part31.TopSurface = Enum.SurfaceType.Smooth
+Part31.Color = Color3.new(1, 0, 0.74902)
+Part31.Position = Vector3.new(66.6014023, 2.57610869, 149.391815)
+Part31.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part31.Color = Color3.new(1, 0, 0.74902)
+CylinderMesh32.Parent = Part31
+CylinderMesh32.Scale = Vector3.new(0.5, 1, 1)
+CylinderMesh32.Scale = Vector3.new(0.5, 1, 1)
+Part33.Parent = mas
+Part33.Material = Enum.Material.Metal
+Part33.BrickColor = BrickColor.new("Fossil")
+Part33.Rotation = Vector3.new(-3.74000001, -6.17999983, -49.6199989)
+Part33.CanCollide = false
+Part33.FormFactor = Enum.FormFactor.Custom
+Part33.Size = Vector3.new(0.200000003, 0.200000003, 1.4000001)
+Part33.CFrame = CFrame.new(66.2111664, 3.13355708, 149.53479, 0.644143879, 0.757297873, -0.107611425, -0.755555034, 0.651871324, 0.0648230165, 0.119239166, 0.0395509824, 0.992078364)
+Part33.BottomSurface = Enum.SurfaceType.Smooth
+Part33.TopSurface = Enum.SurfaceType.Smooth
+Part33.Color = Color3.new(0.623529, 0.631373, 0.67451)
+Part33.Position = Vector3.new(66.2111664, 3.13355708, 149.53479)
+Part33.Orientation = Vector3.new(-3.72000003, -6.19000006, -49.2099991)
+Part33.Color = Color3.new(0.623529, 0.631373, 0.67451)
+BlockMesh34.Parent = Part33
+BlockMesh34.Scale = Vector3.new(0.200000003, 0.200000003, 0.930000007)
+BlockMesh34.Scale = Vector3.new(0.200000003, 0.200000003, 0.930000007)
+Part35.Parent = mas
+Part35.Material = Enum.Material.Metal
+Part35.BrickColor = BrickColor.new("Black")
+Part35.Rotation = Vector3.new(-3.74000001, -6.17999983, 175.37999)
+Part35.CanCollide = false
+Part35.FormFactor = Enum.FormFactor.Custom
+Part35.Size = Vector3.new(0.200000003, 1.20000005, 0.200000003)
+Part35.CFrame = CFrame.new(66.8333359, 2.86680818, 149.014938, -0.990969241, -0.0800166354, -0.107606277, 0.0733195469, -0.995200098, 0.0648291782, -0.112277173, 0.0563541092, 0.992078543)
+Part35.BottomSurface = Enum.SurfaceType.Smooth
+Part35.TopSurface = Enum.SurfaceType.Smooth
+Part35.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part35.Position = Vector3.new(66.8333359, 2.86680818, 149.014938)
+Part35.Orientation = Vector3.new(-3.72000003, -6.19000006, 175.789993)
+Part35.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh36.Parent = Part35
+BlockMesh36.Scale = Vector3.new(0.400000006, 1, 0.300000012)
+BlockMesh36.Scale = Vector3.new(0.400000006, 1, 0.300000012)
+Part37.Parent = mas
+Part37.Material = Enum.Material.Metal
+Part37.BrickColor = BrickColor.new("Black")
+Part37.Rotation = Vector3.new(-3.74000001, -6.17999983, -49.6199989)
+Part37.CanCollide = false
+Part37.FormFactor = Enum.FormFactor.Custom
+Part37.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part37.CFrame = CFrame.new(67.0007248, 3.55778933, 148.98793, 0.644143879, 0.757297873, -0.107611425, -0.755555034, 0.651871324, 0.0648230165, 0.119239166, 0.0395509824, 0.992078364)
+Part37.BottomSurface = Enum.SurfaceType.Smooth
+Part37.TopSurface = Enum.SurfaceType.Smooth
+Part37.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part37.Position = Vector3.new(67.0007248, 3.55778933, 148.98793)
+Part37.Orientation = Vector3.new(-3.72000003, -6.19000006, -49.2099991)
+Part37.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh38.Parent = Part37
+BlockMesh38.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+BlockMesh38.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+Part39.Name = "NeonScreen"
+Part39.Parent = mas
+Part39.Material = Enum.Material.Neon
+Part39.BrickColor = BrickColor.new("Smoky grey")
+Part39.Transparency = 0.60000002384186
+Part39.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part39.CanCollide = false
+Part39.FormFactor = Enum.FormFactor.Custom
+Part39.Size = Vector3.new(0.800000012, 0.200000003, 1)
+Part39.CFrame = CFrame.new(66.620018, 2.80752373, 149.600433, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part39.BottomSurface = Enum.SurfaceType.Smooth
+Part39.TopSurface = Enum.SurfaceType.Smooth
+Part39.Color = Color3.new(0.356863, 0.364706, 0.411765)
+Part39.Position = Vector3.new(66.620018, 2.80752373, 149.600433)
+Part39.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part39.Color = Color3.new(0.356863, 0.364706, 0.411765)
+CylinderMesh40.Parent = Part39
+Part41.Name = "Neon"
+Part41.Parent = mas
+Part41.Material = Enum.Material.Neon
+Part41.BrickColor = BrickColor.new("Institutional white")
+Part41.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part41.CanCollide = false
+Part41.FormFactor = Enum.FormFactor.Custom
+Part41.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part41.CFrame = CFrame.new(66.6291809, 2.89328408, 149.353943, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part41.BottomSurface = Enum.SurfaceType.Smooth
+Part41.TopSurface = Enum.SurfaceType.Smooth
+Part41.Color = Color3.new(0.972549, 0.972549, 0.972549)
+Part41.Position = Vector3.new(66.6291809, 2.89328408, 149.353943)
+Part41.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part41.Color = Color3.new(0.972549, 0.972549, 0.972549)
+CylinderMesh42.Parent = Part41
+CylinderMesh42.Scale = Vector3.new(0.600000024, 1, 1)
+CylinderMesh42.Scale = Vector3.new(0.600000024, 1, 1)
+Part43.Name = "Neon"
+Part43.Parent = mas
+Part43.Material = Enum.Material.Neon
+Part43.BrickColor = BrickColor.new("Ghost grey")
+Part43.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part43.CanCollide = false
+Part43.FormFactor = Enum.FormFactor.Custom
+Part43.Size = Vector3.new(0.200000003, 0.800000012, 1)
+Part43.CFrame = CFrame.new(66.3440018, 3.0681951, 149.553482, 0.990969241, 0.0800166354, -0.107606277, -0.0733195469, 0.995200098, 0.0648291782, 0.112277173, -0.0563541092, 0.992078543)
+Part43.BottomSurface = Enum.SurfaceType.Smooth
+Part43.TopSurface = Enum.SurfaceType.Smooth
+Part43.Color = Color3.new(0.792157, 0.796079, 0.819608)
+Part43.Position = Vector3.new(66.3440018, 3.0681951, 149.553482)
+Part43.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part43.Color = Color3.new(0.792157, 0.796079, 0.819608)
+BlockMesh44.Parent = Part43
+BlockMesh44.Scale = Vector3.new(1.14999998, 0.699999988, 1.04999995)
+BlockMesh44.Scale = Vector3.new(1.14999998, 0.699999988, 1.04999995)
+Part45.Parent = mas
+Part45.Material = Enum.Material.Metal
+Part45.BrickColor = BrickColor.new("Black")
+Part45.Rotation = Vector3.new(-3.74000001, -6.17999983, -124.619995)
+Part45.CanCollide = false
+Part45.FormFactor = Enum.FormFactor.Custom
+Part45.Size = Vector3.new(0.200000003, 0.400000006, 0.200000003)
+Part45.CFrame = CFrame.new(66.7509766, 2.33872962, 149.040497, -0.564779282, 0.818196774, -0.107611381, -0.825209796, -0.561096728, 0.0648149326, -0.00734899752, 0.125408128, 0.9920789)
+Part45.BottomSurface = Enum.SurfaceType.Smooth
+Part45.TopSurface = Enum.SurfaceType.Smooth
+Part45.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part45.Position = Vector3.new(66.7509766, 2.33872962, 149.040497)
+Part45.Orientation = Vector3.new(-3.72000003, -6.19000006, -124.209999)
+Part45.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh46.Parent = Part45
+BlockMesh46.Scale = Vector3.new(0.5, 1, 0.400000006)
+BlockMesh46.Scale = Vector3.new(0.5, 1, 0.400000006)
+Part47.Name = "NeonPow"
+Part47.Parent = mas
+Part47.Material = Enum.Material.Neon
+Part47.BrickColor = BrickColor.new("Really black")
+Part47.Transparency = 1
+Part47.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part47.CanCollide = false
+Part47.FormFactor = Enum.FormFactor.Custom
+Part47.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part47.CFrame = CFrame.new(66.8182297, 2.79285622, 149.622925, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part47.BottomSurface = Enum.SurfaceType.Smooth
+Part47.TopSurface = Enum.SurfaceType.Smooth
+Part47.Color = Color3.new(0.0666667, 0.0666667, 0.0666667)
+Part47.Position = Vector3.new(66.8182297, 2.79285622, 149.622925)
+Part47.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part47.Color = Color3.new(0.0666667, 0.0666667, 0.0666667)
+ParticleEmitter48.Name = "PArti1"
+ParticleEmitter48.Parent = Part47
+ParticleEmitter48.Size = NumberSequence.new(0.20000000298023,1.3333332538605,0.33333301544189,1.1666667461395,0.20000000298023)
+ParticleEmitter48.Color = ColorSequence.new(Color3.new(1, 1, 1),Color3.new(0, 1, 1),Color3.new(1, 0, 0.498039),Color3.new(1, 1, 1),Color3.new(1, 1, 1))
+ParticleEmitter48.LightEmission = 1
+ParticleEmitter48.Texture = "http://www.roblox.com/asset/?id=241779220"
+ParticleEmitter48.ZOffset = 1
+ParticleEmitter48.Lifetime = NumberRange.new(1, 1)
+ParticleEmitter48.Rate = 0.60000002384186
+ParticleEmitter48.Speed = NumberRange.new(0.20000000298023, 0.20000000298023)
+ParticleEmitter48.VelocitySpread = 360
+ParticleEmitter48.Color = ColorSequence.new(Color3.new(1, 1, 1),Color3.new(0, 1, 1),Color3.new(1, 0, 0.498039),Color3.new(1, 1, 1),Color3.new(1, 1, 1))
+ParticleEmitter49.Name = "PArti2"
+ParticleEmitter49.Parent = Part47
+ParticleEmitter49.Size = NumberSequence.new(0.20000000298023,0.5,0.33333301544189,0.5,0.20000000298023)
+ParticleEmitter49.Color = ColorSequence.new(Color3.new(1, 1, 1),Color3.new(0, 1, 1),Color3.new(1, 0, 0.498039),Color3.new(1, 1, 1),Color3.new(1, 1, 1))
+ParticleEmitter49.LightEmission = 1
+ParticleEmitter49.Texture = "http://www.roblox.com/asset/?id=241779220"
+ParticleEmitter49.ZOffset = 1
+ParticleEmitter49.Lifetime = NumberRange.new(2, 2)
+ParticleEmitter49.Rate = 4
+ParticleEmitter49.Speed = NumberRange.new(0.60000002384186, 0.60000002384186)
+ParticleEmitter49.VelocitySpread = 50
+ParticleEmitter49.Color = ColorSequence.new(Color3.new(1, 1, 1),Color3.new(0, 1, 1),Color3.new(1, 0, 0.498039),Color3.new(1, 1, 1),Color3.new(1, 1, 1))
+Part50.Name = "Neon"
+Part50.Parent = mas
+Part50.Material = Enum.Material.Neon
+Part50.BrickColor = BrickColor.new("Ghost grey")
+Part50.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part50.CanCollide = false
+Part50.FormFactor = Enum.FormFactor.Custom
+Part50.Size = Vector3.new(0.399999976, 0.200000003, 1)
+Part50.CFrame = CFrame.new(65.8947449, 2.96126366, 149.511688, 0.990969241, 0.0800166354, -0.107606277, -0.0733195469, 0.995200098, 0.0648291782, 0.112277173, -0.0563541092, 0.992078543)
+Part50.BottomSurface = Enum.SurfaceType.Smooth
+Part50.TopSurface = Enum.SurfaceType.Smooth
+Part50.Color = Color3.new(0.792157, 0.796079, 0.819608)
+Part50.Position = Vector3.new(65.8947449, 2.96126366, 149.511688)
+Part50.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part50.Color = Color3.new(0.792157, 0.796079, 0.819608)
+BlockMesh51.Parent = Part50
+BlockMesh51.Scale = Vector3.new(1.10000002, 0.300000012, 1.04999995)
+BlockMesh51.Scale = Vector3.new(1.10000002, 0.300000012, 1.04999995)
+Part52.Parent = mas
+Part52.Material = Enum.Material.Metal
+Part52.BrickColor = BrickColor.new("Black")
+Part52.Rotation = Vector3.new(-3.74000001, -6.17999983, -49.6199989)
+Part52.CanCollide = false
+Part52.FormFactor = Enum.FormFactor.Custom
+Part52.Size = Vector3.new(0.200000003, 0.600000024, 0.200000003)
+Part52.CFrame = CFrame.new(66.8093109, 3.39304113, 148.977951, 0.644143879, 0.757297873, -0.107611425, -0.755555034, 0.651871324, 0.0648230165, 0.119239166, 0.0395509824, 0.992078364)
+Part52.BottomSurface = Enum.SurfaceType.Smooth
+Part52.TopSurface = Enum.SurfaceType.Smooth
+Part52.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part52.Position = Vector3.new(66.8093109, 3.39304113, 148.977951)
+Part52.Orientation = Vector3.new(-3.72000003, -6.19000006, -49.2099991)
+Part52.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh53.Parent = Part52
+BlockMesh53.Scale = Vector3.new(0.5, 1, 0.400000006)
+BlockMesh53.Scale = Vector3.new(0.5, 1, 0.400000006)
+Part54.Parent = mas
+Part54.Material = Enum.Material.Metal
+Part54.BrickColor = BrickColor.new("Fossil")
+Part54.Rotation = Vector3.new(-3.74000001, -6.17999983, -124.619995)
+Part54.CanCollide = false
+Part54.FormFactor = Enum.FormFactor.Custom
+Part54.Size = Vector3.new(0.200000003, 0.200000003, 1.4000001)
+Part54.CFrame = CFrame.new(66.8114243, 2.29188299, 149.654831, -0.564779282, 0.818196774, -0.107611381, -0.825209796, -0.561096728, 0.0648149326, -0.00734899752, 0.125408128, 0.9920789)
+Part54.BottomSurface = Enum.SurfaceType.Smooth
+Part54.TopSurface = Enum.SurfaceType.Smooth
+Part54.Color = Color3.new(0.623529, 0.631373, 0.67451)
+Part54.Position = Vector3.new(66.8114243, 2.29188299, 149.654831)
+Part54.Orientation = Vector3.new(-3.72000003, -6.19000006, -124.209999)
+Part54.Color = Color3.new(0.623529, 0.631373, 0.67451)
+BlockMesh55.Parent = Part54
+BlockMesh55.Scale = Vector3.new(0.200000003, 0.200000003, 1)
+BlockMesh55.Scale = Vector3.new(0.200000003, 0.200000003, 1)
+Part56.Name = "Neon"
+Part56.Parent = mas
+Part56.Material = Enum.Material.Neon
+Part56.BrickColor = BrickColor.new("Cyan")
+Part56.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part56.CanCollide = false
+Part56.FormFactor = Enum.FormFactor.Custom
+Part56.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part56.CFrame = CFrame.new(66.5681458, 2.4709475, 149.616776, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part56.BottomSurface = Enum.SurfaceType.Smooth
+Part56.TopSurface = Enum.SurfaceType.Smooth
+Part56.Color = Color3.new(0.0156863, 0.686275, 0.92549)
+Part56.Position = Vector3.new(66.5681458, 2.4709475, 149.616776)
+Part56.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part56.Color = Color3.new(0.0156863, 0.686275, 0.92549)
+CylinderMesh57.Parent = Part56
+CylinderMesh57.Scale = Vector3.new(0.800000012, 1, 1)
+CylinderMesh57.Scale = Vector3.new(0.800000012, 1, 1)
+Part58.Name = "Neon"
+Part58.Parent = mas
+Part58.Material = Enum.Material.Neon
+Part58.BrickColor = BrickColor.new("Ghost grey")
+Part58.Rotation = Vector3.new(-3.74000001, -6.17999983, 85.3799973)
+Part58.CanCollide = false
+Part58.FormFactor = Enum.FormFactor.Custom
+Part58.Size = Vector3.new(0.800000012, 0.200000003, 1)
+Part58.CFrame = CFrame.new(66.0527573, 2.81942344, 149.538132, 0.080013603, -0.990968704, -0.107612707, 0.995200574, 0.0733165219, 0.0648252815, -0.056350071, -0.112283126, 0.992078066)
+Part58.BottomSurface = Enum.SurfaceType.Smooth
+Part58.TopSurface = Enum.SurfaceType.Smooth
+Part58.Color = Color3.new(0.792157, 0.796079, 0.819608)
+Part58.Position = Vector3.new(66.0527573, 2.81942344, 149.538132)
+Part58.Orientation = Vector3.new(-3.72000003, -6.19000006, 85.7900009)
+Part58.Color = Color3.new(0.792157, 0.796079, 0.819608)
+BlockMesh59.Parent = Part58
+BlockMesh59.Scale = Vector3.new(1, 0.300000012, 1.04999995)
+BlockMesh59.Scale = Vector3.new(1, 0.300000012, 1.04999995)
+Part60.Parent = mas
+Part60.Material = Enum.Material.Metal
+Part60.BrickColor = BrickColor.new("Black")
+Part60.Rotation = Vector3.new(-3.74000001, -6.17999983, -64.6199951)
+Part60.CanCollide = false
+Part60.FormFactor = Enum.FormFactor.Custom
+Part60.Size = Vector3.new(0.200000003, 0.400000006, 0.200000003)
+Part60.CFrame = CFrame.new(66.7041473, 2.94459677, 150.205353, 0.42618975, 0.898211658, -0.107608683, -0.89852792, 0.43410489, 0.0648239553, 0.104939148, 0.0690620914, 0.992078483)
+Part60.BottomSurface = Enum.SurfaceType.Smooth
+Part60.TopSurface = Enum.SurfaceType.Smooth
+Part60.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part60.Position = Vector3.new(66.7041473, 2.94459677, 150.205353)
+Part60.Orientation = Vector3.new(-3.72000003, -6.19000006, -64.2099991)
+Part60.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh61.Parent = Part60
+BlockMesh61.Scale = Vector3.new(0.5, 1, 0.400000006)
+BlockMesh61.Scale = Vector3.new(0.5, 1, 0.400000006)
+Part62.Parent = mas
+Part62.Material = Enum.Material.Metal
+Part62.BrickColor = BrickColor.new("Black")
+Part62.Rotation = Vector3.new(-3.74000001, -6.17999983, -64.6199951)
+Part62.CanCollide = false
+Part62.FormFactor = Enum.FormFactor.Custom
+Part62.Size = Vector3.new(0.200000003, 0.200000003, 0.200000048)
+Part62.CFrame = CFrame.new(66.97052, 2.93317413, 149.025513, 0.42618975, 0.898211658, -0.107608683, -0.89852792, 0.43410489, 0.0648239553, 0.104939148, 0.0690620914, 0.992078483)
+Part62.BottomSurface = Enum.SurfaceType.Smooth
+Part62.TopSurface = Enum.SurfaceType.Smooth
+Part62.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part62.Position = Vector3.new(66.97052, 2.93317413, 149.025513)
+Part62.Orientation = Vector3.new(-3.72000003, -6.19000006, -64.2099991)
+Part62.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh63.Parent = Part62
+BlockMesh63.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+BlockMesh63.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+Part64.Name = "Neon"
+Part64.Parent = mas
+Part64.Material = Enum.Material.Neon
+Part64.BrickColor = BrickColor.new("Cyan")
+Part64.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part64.CanCollide = false
+Part64.FormFactor = Enum.FormFactor.Custom
+Part64.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part64.CFrame = CFrame.new(66.5967789, 2.71456599, 149.523392, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part64.BottomSurface = Enum.SurfaceType.Smooth
+Part64.TopSurface = Enum.SurfaceType.Smooth
+Part64.Color = Color3.new(0.0156863, 0.686275, 0.92549)
+Part64.Position = Vector3.new(66.5967789, 2.71456599, 149.523392)
+Part64.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part64.Color = Color3.new(0.0156863, 0.686275, 0.92549)
+CylinderMesh65.Parent = Part64
+CylinderMesh65.Scale = Vector3.new(0.400000006, 1, 1)
+CylinderMesh65.Scale = Vector3.new(0.400000006, 1, 1)
+Part66.Name = "Neon"
+Part66.Parent = mas
+Part66.Material = Enum.Material.Neon
+Part66.BrickColor = BrickColor.new("Hot pink")
+Part66.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part66.CanCollide = false
+Part66.FormFactor = Enum.FormFactor.Custom
+Part66.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part66.CFrame = CFrame.new(66.6322556, 3.10011029, 149.461685, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part66.BottomSurface = Enum.SurfaceType.Smooth
+Part66.TopSurface = Enum.SurfaceType.Smooth
+Part66.Color = Color3.new(1, 0, 0.74902)
+Part66.Position = Vector3.new(66.6322556, 3.10011029, 149.461685)
+Part66.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part66.Color = Color3.new(1, 0, 0.74902)
+CylinderMesh67.Parent = Part66
+Part68.Parent = mas
+Part68.Material = Enum.Material.Metal
+Part68.BrickColor = BrickColor.new("Black")
+Part68.Rotation = Vector3.new(-3.74000001, -6.17999983, 175.37999)
+Part68.CanCollide = false
+Part68.FormFactor = Enum.FormFactor.Custom
+Part68.Size = Vector3.new(0.200000003, 1.20000005, 0.200000003)
+Part68.CFrame = CFrame.new(66.7041473, 2.94459748, 150.205353, -0.990969241, -0.0800166354, -0.107606277, 0.0733195469, -0.995200098, 0.0648291782, -0.112277173, 0.0563541092, 0.992078543)
+Part68.BottomSurface = Enum.SurfaceType.Smooth
+Part68.TopSurface = Enum.SurfaceType.Smooth
+Part68.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part68.Position = Vector3.new(66.7041473, 2.94459748, 150.205353)
+Part68.Orientation = Vector3.new(-3.72000003, -6.19000006, 175.789993)
+Part68.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh69.Parent = Part68
+BlockMesh69.Scale = Vector3.new(0.400000006, 1, 0.300000012)
+BlockMesh69.Scale = Vector3.new(0.400000006, 1, 0.300000012)
+Part70.Parent = mas
+Part70.Material = Enum.Material.Metal
+Part70.BrickColor = BrickColor.new("Black")
+Part70.Rotation = Vector3.new(-3.74000001, -6.17999983, -49.6199989)
+Part70.CanCollide = false
+Part70.FormFactor = Enum.FormFactor.Custom
+Part70.Size = Vector3.new(0.200000003, 0.600000024, 0.200000003)
+Part70.CFrame = CFrame.new(66.6801605, 3.47084045, 150.168488, 0.644143879, 0.757297873, -0.107611425, -0.755555034, 0.651871324, 0.0648230165, 0.119239166, 0.0395509824, 0.992078364)
+Part70.BottomSurface = Enum.SurfaceType.Smooth
+Part70.TopSurface = Enum.SurfaceType.Smooth
+Part70.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part70.Position = Vector3.new(66.6801605, 3.47084045, 150.168488)
+Part70.Orientation = Vector3.new(-3.72000003, -6.19000006, -49.2099991)
+Part70.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh71.Parent = Part70
+BlockMesh71.Scale = Vector3.new(0.5, 1, 0.400000006)
+BlockMesh71.Scale = Vector3.new(0.5, 1, 0.400000006)
+Part72.Parent = mas
+Part72.Material = Enum.Material.Metal
+Part72.BrickColor = BrickColor.new("Black")
+Part72.Rotation = Vector3.new(-3.74000001, -6.17999983, 10.3800001)
+Part72.CanCollide = false
+Part72.FormFactor = Enum.FormFactor.Custom
+Part72.Size = Vector3.new(0.200000003, 0.600000024, 0.200000003)
+Part72.CFrame = CFrame.new(66.6347351, 3.04941678, 148.981476, 0.977912366, -0.179188758, -0.107612357, 0.186752722, 0.980266809, 0.0648240075, 0.0938730761, -0.0834891349, 0.992078066)
+Part72.BottomSurface = Enum.SurfaceType.Smooth
+Part72.TopSurface = Enum.SurfaceType.Smooth
+Part72.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part72.Position = Vector3.new(66.6347351, 3.04941678, 148.981476)
+Part72.Orientation = Vector3.new(-3.72000003, -6.19000006, 10.79)
+Part72.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh73.Parent = Part72
+BlockMesh73.Scale = Vector3.new(0.5, 0.899999976, 0.400000006)
+BlockMesh73.Scale = Vector3.new(0.5, 0.899999976, 0.400000006)
+Part74.Name = "Neon"
+Part74.Parent = mas
+Part74.Material = Enum.Material.Neon
+Part74.BrickColor = BrickColor.new("Ghost grey")
+Part74.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part74.CanCollide = false
+Part74.FormFactor = Enum.FormFactor.Custom
+Part74.Size = Vector3.new(0.399999976, 0.200000003, 1)
+Part74.CFrame = CFrame.new(65.9139557, 3.20009184, 149.498169, 0.990969241, 0.0800166354, -0.107606277, -0.0733195469, 0.995200098, 0.0648291782, 0.112277173, -0.0563541092, 0.992078543)
+Part74.BottomSurface = Enum.SurfaceType.Smooth
+Part74.TopSurface = Enum.SurfaceType.Smooth
+Part74.Color = Color3.new(0.792157, 0.796079, 0.819608)
+Part74.Position = Vector3.new(65.9139557, 3.20009184, 149.498169)
+Part74.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part74.Color = Color3.new(0.792157, 0.796079, 0.819608)
+BlockMesh75.Parent = Part74
+BlockMesh75.Scale = Vector3.new(1.10000002, 0.300000012, 1.04999995)
+BlockMesh75.Scale = Vector3.new(1.10000002, 0.300000012, 1.04999995)
+Part76.Parent = mas
+Part76.Material = Enum.Material.Metal
+Part76.BrickColor = BrickColor.new("Black")
+Part76.Rotation = Vector3.new(-3.74000001, -6.17999983, -124.619995)
+Part76.CanCollide = false
+Part76.FormFactor = Enum.FormFactor.Custom
+Part76.Size = Vector3.new(0.200000003, 0.200000003, 0.200000003)
+Part76.CFrame = CFrame.new(66.7468796, 2.33076596, 150.250092, -0.564779282, 0.818196774, -0.107611381, -0.825209796, -0.561096728, 0.0648149326, -0.00734899752, 0.125408128, 0.9920789)
+Part76.BottomSurface = Enum.SurfaceType.Smooth
+Part76.TopSurface = Enum.SurfaceType.Smooth
+Part76.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part76.Position = Vector3.new(66.7468796, 2.33076596, 150.250092)
+Part76.Orientation = Vector3.new(-3.72000003, -6.19000006, -124.209999)
+Part76.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh77.Parent = Part76
+BlockMesh77.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+BlockMesh77.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+Part78.Name = "Neon"
+Part78.Parent = mas
+Part78.Material = Enum.Material.Neon
+Part78.BrickColor = BrickColor.new("Ghost grey")
+Part78.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part78.CanCollide = false
+Part78.FormFactor = Enum.FormFactor.Custom
+Part78.Size = Vector3.new(0.399999976, 0.200000003, 1)
+Part78.CFrame = CFrame.new(65.8603363, 2.53333664, 149.535934, 0.990969241, 0.0800166354, -0.107606277, -0.0733195469, 0.995200098, 0.0648291782, 0.112277173, -0.0563541092, 0.992078543)
+Part78.BottomSurface = Enum.SurfaceType.Smooth
+Part78.TopSurface = Enum.SurfaceType.Smooth
+Part78.Color = Color3.new(0.792157, 0.796079, 0.819608)
+Part78.Position = Vector3.new(65.8603363, 2.53333664, 149.535934)
+Part78.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part78.Color = Color3.new(0.792157, 0.796079, 0.819608)
+BlockMesh79.Parent = Part78
+BlockMesh79.Scale = Vector3.new(1.10000002, 0.600000024, 1.04999995)
+BlockMesh79.Scale = Vector3.new(1.10000002, 0.600000024, 1.04999995)
+Part80.Parent = mas
+Part80.Material = Enum.Material.Metal
+Part80.BrickColor = BrickColor.new("Really black")
+Part80.Rotation = Vector3.new(-3.74000001, -6.17999983, -94.6199951)
+Part80.CanCollide = false
+Part80.FormFactor = Enum.FormFactor.Custom
+Part80.Size = Vector3.new(0.800000012, 0.200000003, 1)
+Part80.CFrame = CFrame.new(66.5903091, 2.80971122, 149.597076, -0.080013603, 0.99096936, -0.107606813, -0.995200574, -0.073316969, 0.0648248419, 0.056350071, 0.112277217, 0.992078722)
+Part80.BottomSurface = Enum.SurfaceType.Smooth
+Part80.TopSurface = Enum.SurfaceType.Smooth
+Part80.Color = Color3.new(0.0666667, 0.0666667, 0.0666667)
+Part80.Position = Vector3.new(66.5903091, 2.80971122, 149.597076)
+Part80.Orientation = Vector3.new(-3.72000003, -6.19000006, -94.2099991)
+Part80.Color = Color3.new(0.0666667, 0.0666667, 0.0666667)
+CylinderMesh81.Parent = Part80
+Part82.Name = "Neon"
+Part82.Parent = mas
+Part82.Material = Enum.Material.Neon
+Part82.BrickColor = BrickColor.new("Ghost grey")
+Part82.Rotation = Vector3.new(-3.74000001, -6.17999983, -4.61999989)
+Part82.CanCollide = false
+Part82.FormFactor = Enum.FormFactor.Custom
+Part82.Size = Vector3.new(0.399999976, 0.200000003, 1)
+Part82.CFrame = CFrame.new(65.8819351, 2.80205417, 149.520721, 0.990969241, 0.0800166354, -0.107606277, -0.0733195469, 0.995200098, 0.0648291782, 0.112277173, -0.0563541092, 0.992078543)
+Part82.BottomSurface = Enum.SurfaceType.Smooth
+Part82.TopSurface = Enum.SurfaceType.Smooth
+Part82.Color = Color3.new(0.792157, 0.796079, 0.819608)
+Part82.Position = Vector3.new(65.8819351, 2.80205417, 149.520721)
+Part82.Orientation = Vector3.new(-3.72000003, -6.19000006, -4.21000004)
+Part82.Color = Color3.new(0.792157, 0.796079, 0.819608)
+BlockMesh83.Parent = Part82
+BlockMesh83.Scale = Vector3.new(1.10000002, 0.300000012, 1.04999995)
+BlockMesh83.Scale = Vector3.new(1.10000002, 0.300000012, 1.04999995)
+Part84.Parent = mas
+Part84.Material = Enum.Material.Metal
+Part84.BrickColor = BrickColor.new("Fossil")
+Part84.Rotation = Vector3.new(-3.74000001, -6.17999983, -64.6199951)
+Part84.CanCollide = false
+Part84.FormFactor = Enum.FormFactor.Custom
+Part84.Size = Vector3.new(0.200000003, 0.200000003, 1.4000001)
+Part84.CFrame = CFrame.new(66.9059601, 2.972049, 149.620728, 0.42618975, 0.898211658, -0.107608683, -0.89852792, 0.43410489, 0.0648239553, 0.104939148, 0.0690620914, 0.992078483)
+Part84.BottomSurface = Enum.SurfaceType.Smooth
+Part84.TopSurface = Enum.SurfaceType.Smooth
+Part84.Color = Color3.new(0.623529, 0.631373, 0.67451)
+Part84.Position = Vector3.new(66.9059601, 2.972049, 149.620728)
+Part84.Orientation = Vector3.new(-3.72000003, -6.19000006, -64.2099991)
+Part84.Color = Color3.new(0.623529, 0.631373, 0.67451)
+BlockMesh85.Parent = Part84
+BlockMesh85.Scale = Vector3.new(0.200000003, 0.200000003, 1)
+BlockMesh85.Scale = Vector3.new(0.200000003, 0.200000003, 1)
+Part86.Parent = mas
+Part86.Material = Enum.Material.Metal
+Part86.BrickColor = BrickColor.new("Fossil")
+Part86.Rotation = Vector3.new(-3.74000001, -6.17999983, -49.6199989)
+Part86.CanCollide = false
+Part86.FormFactor = Enum.FormFactor.Custom
+Part86.Size = Vector3.new(0.200000003, 0.200000003, 1.4000001)
+Part86.CFrame = CFrame.new(66.5001068, 2.51155281, 149.606735, 0.644143879, 0.757297873, -0.107611425, -0.755555034, 0.651871324, 0.0648230165, 0.119239166, 0.0395509824, 0.992078364)
+Part86.BottomSurface = Enum.SurfaceType.Smooth
+Part86.TopSurface = Enum.SurfaceType.Smooth
+Part86.Color = Color3.new(0.623529, 0.631373, 0.67451)
+Part86.Position = Vector3.new(66.5001068, 2.51155281, 149.606735)
+Part86.Orientation = Vector3.new(-3.72000003, -6.19000006, -49.2099991)
+Part86.Color = Color3.new(0.623529, 0.631373, 0.67451)
+BlockMesh87.Parent = Part86
+BlockMesh87.Scale = Vector3.new(0.200000003, 0.200000003, 0.930000007)
+BlockMesh87.Scale = Vector3.new(0.200000003, 0.200000003, 0.930000007)
+Part88.Parent = mas
+Part88.Material = Enum.Material.Metal
+Part88.BrickColor = BrickColor.new("Black")
+Part88.Rotation = Vector3.new(-3.74000001, -6.17999983, -124.619995)
+Part88.CanCollide = false
+Part88.FormFactor = Enum.FormFactor.Custom
+Part88.Size = Vector3.new(0.200000003, 0.200000003, 0.200000048)
+Part88.CFrame = CFrame.new(66.8760147, 2.25297546, 149.059616, -0.564779282, 0.818196177, -0.107611336, -0.825209558, -0.561096311, 0.0648149028, -0.00734900218, 0.125408024, 0.992078424)
+Part88.BottomSurface = Enum.SurfaceType.Smooth
+Part88.TopSurface = Enum.SurfaceType.Smooth
+Part88.Color = Color3.new(0.105882, 0.164706, 0.207843)
+Part88.Position = Vector3.new(66.8760147, 2.25297546, 149.059616)
+Part88.Orientation = Vector3.new(-3.72000003, -6.19000006, -124.209999)
+Part88.Color = Color3.new(0.105882, 0.164706, 0.207843)
+BlockMesh89.Parent = Part88
+BlockMesh89.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+BlockMesh89.Scale = Vector3.new(0.5, 0.5, 0.800000012)
+Weld90.Name = "BTWeld"
+Weld90.Parent = Part88
+Weld90.C1 = CFrame.new(0.530890465, 0.258514404, -0.650085449, 0.866024196, 0.500002146, 1.02445483e-05, -0.500002086, 0.866024375, -3.76999378e-06, -1.07614323e-05, -1.83284283e-06, 1.00000012)
+Weld90.Part0 = Part88
+Weld90.Part1 = Part0
+Weld91.Name = "BTWeld"
+Weld91.Parent = Part88
+Weld91.C1 = CFrame.new(0.541923523, -0.216629028, -0.600036621, 0.258815438, 0.965927064, 6.21378422e-06, -0.965926766, 0.258815497, -5.20050526e-06, -6.64265826e-06, -4.60445881e-06, 1.00000024)
+Weld91.Part0 = Part88
+Weld91.Part1 = Part2
+Weld92.Name = "BTWeld"
+Weld92.Parent = Part88
+Weld92.C1 = CFrame.new(0.87361908, -0.900878429, -0.600036621, -0.499999851, 0.866025805, -3.94880772e-06, -0.866025448, -0.500000119, -1.46068633e-05, -1.46324746e-05, -3.84449959e-06, 1.00000036)
+Weld92.Part0 = Part88
+Weld92.Part1 = Part4
+Weld93.Name = "BTWeld"
+Weld93.Parent = Part88
+Weld93.C1 = CFrame.new(0.914054871, -0.942192078, -0.600112915, 0.258815438, 0.965927422, 6.20633364e-06, -0.965926766, 0.258815527, -5.19677997e-06, -6.6421926e-06, -4.61935997e-06, 1.00000048)
+Weld93.Part0 = Part88
+Weld93.Part1 = Part6
+Weld94.Name = "BTWeld"
+Weld94.Parent = Part88
+Weld94.C1 = CFrame.new(0.370911121, 0.258468628, -0.720016479, 0.866024256, 0.500002384, 1.02482736e-05, -0.500002146, 0.866024613, -3.74764204e-06, -1.07609667e-05, -1.81794167e-06, 1.00000048)
+Weld94.Part0 = Part88
+Weld94.Part1 = Part8
+Weld95.Name = "BTWeld"
+Weld95.Parent = Part88
+Weld95.C1 = CFrame.new(0.720885754, 0.258468628, -0.710006714, 0.866024256, 0.500002384, 1.02482736e-05, -0.500002146, 0.866024613, -3.74764204e-06, -1.07609667e-05, -1.81794167e-06, 1.00000048)
+Weld95.Part0 = Part88
+Weld95.Part1 = Part10
+Weld96.Name = "BTWeld"
+Weld96.Parent = Part88
+Weld96.C1 = CFrame.new(0.393592834, -1.04088974, -0.60005188, -0.499999911, 0.866025925, -3.9562583e-06, -0.866025567, -0.500000179, -1.4603138e-05, -1.4633406e-05, -3.84449959e-06, 1.00000048)
+Weld96.Part0 = Part88
+Weld96.Part1 = Part12
+Weld97.Name = "BTWeld"
+Weld97.Parent = Part88
+Weld97.C1 = CFrame.new(0.914093018, -0.942150116, -1.20014954, 0.258815438, 0.965927422, 6.20633364e-06, -0.965926766, 0.258815527, -5.19677997e-06, -6.6421926e-06, -4.61935997e-06, 1.00000048)
+Weld97.Part0 = Part88
+Weld97.Part1 = Part14
+Weld98.Name = "BTWeld"
+Weld98.Parent = Part88
+Weld98.C1 = CFrame.new(0.785232544, -0.744485855, -0.596969604, -0.564821064, 0.82027781, -0.0901231468, -0.825126767, -0.562968016, 0.0472601652, -0.0119699761, 0.101056576, 0.994809031)
+Weld98.Part0 = Part88
+Weld98.Part1 = Part16
+Weld99.Name = "BTWeld"
+Weld99.Parent = Part88
+Weld99.C1 = CFrame.new(0.673599243, -0.555906296, -0.600006104, -0.49999994, 0.866026044, -3.97115946e-06, -0.866025746, -0.500000298, -1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld99.Part0 = Part88
+Weld99.Part1 = nil
+Weld100.Name = "BTWeld"
+Weld100.Parent = Part88
+Weld100.C1 = CFrame.new(0.574424744, -0.225036621, -6.10351563e-05, 0.499999136, 0.86602658, 7.01099634e-06, -0.866026103, 0.499999195, -6.2957406e-06, -8.9709647e-06, -2.90572643e-06, 1.00000036)
+Weld100.Part0 = Part88
+Weld100.Part1 = Part17
+Weld101.Name = "BTWeld"
+Weld101.Parent = Part88
+Weld101.C1 = CFrame.new(0.0945587158, -0.830482483, -1.20004272, -0.707104445, 0.707109571, -6.55651093e-07, -0.707109451, -0.707104862, -9.13441181e-06, -6.93462789e-06, -5.9902668e-06, 1.00000036)
+Weld101.Part0 = Part88
+Weld101.Part1 = Part19
+Weld102.Name = "BTWeld"
+Weld102.Parent = Part88
+Weld102.C1 = CFrame.new(0.440918922, 0.258491516, -0.919967651, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld102.Part0 = Part88
+Weld102.Part1 = Part21
+Weld103.Name = "BTWeld"
+Weld103.Parent = Part88
+Weld103.C1 = CFrame.new(0.773635864, -0.540898323, -0.60005188, -0.49999994, 0.866026044, -3.97115946e-06, -0.866025746, -0.500000298, -1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld103.Part0 = Part88
+Weld103.Part1 = Part23
+Weld104.Name = "BTWeld"
+Weld104.Parent = Part88
+Weld104.C1 = CFrame.new(0.373588562, -0.470883369, -0.600036621, -0.49999994, 0.866026044, -3.97115946e-06, -0.866025746, -0.500000298, -1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld104.Part0 = Part88
+Weld104.Part1 = Part25
+Weld105.Name = "BTWeld"
+Weld105.Parent = Part88
+Weld105.C1 = CFrame.new(1.14440918e-05, 0.152832031, -1.19998169, 1.00000024, 1.3213139e-07, -1.02445483e-08, 1.34459697e-08, 1.00000072, 1.49011612e-08, -3.7252903e-09, 7.4505806e-09, 1.00000048)
+Weld105.Part0 = Part88
+Weld105.Part1 = Part27
+Weld106.Name = "BTWeld"
+Weld106.Parent = Part88
+Weld106.C1 = CFrame.new(0.574466705, -0.377807617, -1.20001221, 0.499999136, 0.86602658, 7.01099634e-06, -0.866026103, 0.499999195, -6.2957406e-06, -8.9709647e-06, -2.90572643e-06, 1.00000036)
+Weld106.Part0 = Part88
+Weld106.Part1 = Part29
+Weld107.Name = "BTWeld"
+Weld107.Parent = Part88
+Weld107.C1 = CFrame.new(0.280889511, 0.258522034, -0.380065918, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld107.Part0 = Part88
+Weld107.Part1 = Part31
+Weld108.Name = "BTWeld"
+Weld108.Parent = Part88
+Weld108.C1 = CFrame.new(1.03692245, -0.0893325806, -0.600036621, 0.258815587, 0.965927541, 6.19143248e-06, -0.965926886, 0.258815497, -5.20050526e-06, -6.6421926e-06, -4.63426113e-06, 1.00000048)
+Weld108.Part0 = Part88
+Weld108.Part1 = Part33
+Weld109.Name = "BTWeld"
+Weld109.Parent = Part88
+Weld109.C1 = CFrame.new(-0.0923156738, 0.609988213, -6.10351563e-05, 0.49999994, -0.866026044, 3.97115946e-06, 0.866025746, 0.500000298, 1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld109.Part0 = Part88
+Weld109.Part1 = Part35
+Weld110.Name = "BTWeld"
+Weld110.Parent = Part88
+Weld110.C1 = CFrame.new(0.914070129, -0.942180634, -4.57763672e-05, 0.258815587, 0.965927541, 6.19143248e-06, -0.965926886, 0.258815497, -5.20050526e-06, -6.6421926e-06, -4.63426113e-06, 1.00000048)
+Weld110.Part0 = Part88
+Weld110.Part1 = Part37
+Weld111.Name = "BTWeld"
+Weld111.Parent = Part88
+Weld111.C1 = CFrame.new(0.500927925, 0.23361969, -0.600021362, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld111.Part0 = Part88
+Weld111.Part1 = Part39
+Weld112.Name = "BTWeld"
+Weld112.Parent = Part88
+Weld112.C1 = CFrame.new(0.600898743, 0.258506775, -0.360061646, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld112.Part0 = Part88
+Weld112.Part1 = Part41
+Weld113.Name = "BTWeld"
+Weld113.Parent = Part88
+Weld113.C1 = CFrame.new(0.531524658, -0.740903854, -0.60005188, -0.49999994, 0.866026044, -3.97115946e-06, -0.866025746, -0.500000298, -1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld113.Part0 = Part88
+Weld113.Part1 = Part43
+Weld114.Name = "BTWeld"
+Weld114.Parent = Part88
+Weld114.C1 = CFrame.new(7.62939453e-06, 0.152816772, -4.57763672e-05, 1.00000024, 1.3213139e-07, -1.02445483e-08, 1.34459697e-08, 1.00000072, 1.49011612e-08, -3.7252903e-09, 7.4505806e-09, 1.00000048)
+Weld114.Part0 = Part88
+Weld114.Part1 = Part45
+Weld115.Name = "BTWeld"
+Weld115.Parent = Part88
+Weld115.C1 = CFrame.new(0.500922203, 0.0335998535, -0.600067139, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld115.Part0 = Part88
+Weld115.Part1 = Part47
+Weld116.Name = "BTWeld"
+Weld116.Parent = Part88
+Weld116.C1 = CFrame.new(0.973579407, -0.600892067, -0.600006104, -0.49999994, 0.866026044, -3.97115946e-06, -0.866025746, -0.500000298, -1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld116.Part0 = Part88
+Weld116.Part1 = Part50
+Weld117.Name = "BTWeld"
+Weld117.Parent = Part88
+Weld117.C1 = CFrame.new(0.0937805176, -0.671466827, -0.600036621, -0.866026342, 0.499999076, -1.13546848e-05, -0.499999017, -0.8660267, -7.99447298e-06, -1.38427131e-05, -1.23679638e-06, 1.00000048)
+Weld117.Part0 = Part88
+Weld117.Part1 = nil
+Weld118.Name = "BTWeld"
+Weld118.Parent = Part88
+Weld118.C1 = CFrame.new(0.914085388, -0.689430237, -6.10351563e-05, 0.258815587, 0.965927541, 6.19143248e-06, -0.965926886, 0.258815497, -5.20050526e-06, -6.6421926e-06, -4.63426113e-06, 1.00000048)
+Weld118.Part0 = Part88
+Weld118.Part1 = Part52
+Weld119.Name = "BTWeld"
+Weld119.Parent = Part88
+Weld119.C1 = CFrame.new(3.81469727e-06, 3.05175781e-05, -0.599975586, 1.00000024, 1.3213139e-07, -1.02445483e-08, 1.34459697e-08, 1.00000072, 1.49011612e-08, -3.7252903e-09, 7.4505806e-09, 1.00000048)
+Weld119.Part0 = Part88
+Weld119.Part1 = Part54
+Weld120.Name = "BTWeld"
+Weld120.Parent = Part88
+Weld120.C1 = CFrame.new(0.160895348, 0.258514404, -0.600006104, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld120.Part0 = Part88
+Weld120.Part1 = Part56
+Weld121.Name = "BTWeld"
+Weld121.Parent = Part88
+Weld121.C1 = CFrame.new(-0.470891953, -0.803619385, -0.600036621, -0.866024435, -0.500002503, -1.02445483e-05, 0.500002205, -0.866024673, -2.18302011e-06, -7.790979e-06, -6.9886446e-06, 1.00000048)
+Weld121.Part0 = Part88
+Weld121.Part1 = Part58
+Weld122.Name = "BTWeld"
+Weld122.Parent = Part88
+Weld122.C1 = CFrame.new(0.574455261, -0.224990845, -1.19998169, 0.499999136, 0.86602658, 7.01099634e-06, -0.866026103, 0.499999195, -6.2957406e-06, -8.9709647e-06, -2.90572643e-06, 1.00000036)
+Weld122.Part0 = Part88
+Weld122.Part1 = Part60
+Weld123.Name = "BTWeld"
+Weld123.Parent = Part88
+Weld123.C1 = CFrame.new(0.574478149, -0.377807617, -9.15527344e-05, 0.499999136, 0.86602658, 7.01099634e-06, -0.866026103, 0.499999195, -6.2957406e-06, -8.9709647e-06, -2.90572643e-06, 1.00000036)
+Weld123.Part0 = Part88
+Weld123.Part1 = Part62
+Weld124.Name = "BTWeld"
+Weld124.Parent = Part88
+Weld124.C1 = CFrame.new(0.410898209, 0.258483887, -0.520065308, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld124.Part0 = Part88
+Weld124.Part1 = Part64
+Weld125.Name = "BTWeld"
+Weld125.Parent = Part88
+Weld125.C1 = CFrame.new(0.800907135, 0.258522034, -0.480026245, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld125.Part0 = Part88
+Weld125.Part1 = Part66
+Weld126.Name = "BTWeld"
+Weld126.Parent = Part88
+Weld126.C1 = CFrame.new(-0.0923843384, 0.609981537, -1.19999695, 0.49999994, -0.866026044, 3.97115946e-06, 0.866025746, 0.500000298, 1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld126.Part0 = Part88
+Weld126.Part1 = Part68
+Weld127.Name = "BTWeld"
+Weld127.Parent = Part88
+Weld127.C1 = CFrame.new(0.914100647, -0.689426422, -1.20010376, 0.258815587, 0.965927541, 6.19143248e-06, -0.965926886, 0.258815497, -5.20050526e-06, -6.6421926e-06, -4.63426113e-06, 1.00000048)
+Weld127.Part0 = Part88
+Weld127.Part1 = Part70
+Weld128.Name = "BTWeld"
+Weld128.Parent = Part88
+Weld128.C1 = CFrame.new(0.500920296, 0.253608704, -0.600021362, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld128.Part0 = Part88
+Weld128.Part1 = nil
+Weld129.Name = "BTWeld"
+Weld129.Parent = Part88
+Weld129.C1 = CFrame.new(0.094543457, -0.830480576, -7.62939453e-05, -0.707104445, 0.707109571, -6.55651093e-07, -0.707109451, -0.707104862, -9.13441181e-06, -6.93462789e-06, -5.9902668e-06, 1.00000036)
+Weld129.Part0 = Part88
+Weld129.Part1 = Part72
+Weld130.Name = "BTWeld"
+Weld130.Parent = Part88
+Weld130.C1 = CFrame.new(0.973571777, -0.840872765, -0.600006104, -0.49999994, 0.866026044, -3.97115946e-06, -0.866025746, -0.500000298, -1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld130.Part0 = Part88
+Weld130.Part1 = Part74
+Weld131.Name = "BTWeld"
+Weld131.Parent = Part88
+Weld131.C1 = CFrame.new(1.14440918e-05, 7.62939453e-06, -1.19998169, 1.00000024, 1.3213139e-07, -1.02445483e-08, 1.34459697e-08, 1.00000072, 1.49011612e-08, -3.7252903e-09, 7.4505806e-09, 1.00000048)
+Weld131.Part0 = Part88
+Weld131.Part1 = Part76
+Weld132.Name = "BTWeld"
+Weld132.Parent = Part88
+Weld132.C1 = CFrame.new(0.973579407, -0.170901299, -0.600006104, -0.49999994, 0.866026044, -3.97115946e-06, -0.866025746, -0.500000298, -1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld132.Part0 = Part88
+Weld132.Part1 = Part78
+Weld133.Name = "BTWeld"
+Weld133.Parent = Part88
+Weld133.C1 = CFrame.new(0.500916481, 0.263595581, -0.600036621, 0.866024435, 0.500002503, 1.02445483e-05, -0.500002146, 0.866024673, -3.76999378e-06, -1.07609667e-05, -1.84029341e-06, 1.00000048)
+Weld133.Part0 = Part88
+Weld133.Part1 = Part80
+Weld134.Name = "BTWeld"
+Weld134.Parent = Part88
+Weld134.C1 = CFrame.new(0.973587036, -0.4409132, -0.600021362, -0.49999994, 0.866026044, -3.97115946e-06, -0.866025746, -0.500000298, -1.45994127e-05, -1.46371312e-05, -3.85940075e-06, 1.00000048)
+Weld134.Part0 = Part88
+Weld134.Part1 = Part82
+Weld135.Name = "BTWeld"
+Weld135.Parent = Part88
+Weld135.C1 = CFrame.new(0.574462891, -0.377799988, -0.60005188, 0.499999136, 0.86602658, 7.01099634e-06, -0.866026103, 0.499999195, -6.2957406e-06, -8.9709647e-06, -2.90572643e-06, 1.00000036)
+Weld135.Part0 = Part88
+Weld135.Part1 = Part84
+Weld136.Name = "BTWeld"
+Weld136.Parent = Part88
+Weld136.C1 = CFrame.new(0.372268677, 0.0944747925, -0.599990845, 0.258815587, 0.965927541, 6.19143248e-06, -0.965926886, 0.258815497, -5.20050526e-06, -6.6421926e-06, -4.63426113e-06, 1.00000048)
+Weld136.Part0 = Part88
+Weld136.Part1 = Part86
+for i,v in pairs(mas:GetChildren()) do
+	v.Parent = game:GetService("Players").LocalPlayer.Character
+	pcall(function() v:MakeJoints() end)
+end
+mas:Destroy()
+for i,v in pairs(cors) do
+	spawn(function()
+		pcall(v)
+	end)
+end
+
+ 
+
+ 
+ 
+ 
+
+
+ 
+ 
+
+
+local Player = game.Players.LocalPlayer
+local Character = Player.Character
+RS = Character.RightUpperArm["RightShoulder"]
+local Mouse = Player:GetMouse()
+
+for i,v in pairs(chr:children()) do
+        if v.ClassName == "Hat" then
+                print(v.Name.." has been removed, #baldforbieber")
+                v:destroy()
+        end
+end
+ 
+hum = chr.Humanoid
+ 
+function CreateMesh(parent, id, x, y, z, texture)
+local m=Instance.new("SpecialMesh", parent)
+m.MeshType = "FileMesh"
+m.MeshId="http://www.roblox.com/asset/?id="..id
+if texture ~= nil then
+m.TextureId="http://www.roblox.com/asset/?id="..texture
+end
+m.Scale = Vector3.new(x,y,z)
+end
+ 
+ 
+
+Hat=function()
+sword = Instance.new("Part", chr)
+CreateMesh(sword, 591117528, 0.01,0.01,0.01)
+sword.Name = "sword"
+sword.Locked = true
+sword.BrickColor = BrickColor.new("White")
+sword.CanCollide=false
+sword.Size=Vector3.new(1,1,1)
+swordw = Instance.new("Weld",sword)
+swordw.Part0=sword
+swordw.Part1=chr['RightHand']
+swordw.C0=CFrame.new(0,-4,0)
+swordw.C1=euler(rad(270),rad(90),rad(0))
+end
+ 
+Hat()
+ 
+
+aa1={}
+UpperTorso=game.Players.LocalPlayer.Character.UpperTorso
+ 
+local WorldUp = Vector3.new(0,1,0)
+function look2(Vec1,Vec2)
+   local Orig = Vec1
+   Vec1 = Vec1+Vector3.new(0,1,0)
+   Vec2 = Vec2+Vector3.new(0,1,0)
+   local Forward = (Vec2-Vec1).unit
+   local Up = (WorldUp-WorldUp:Dot(Forward)*Forward).unit
+   local Right = Up:Cross(Forward).unit
+   Forward = -Forward
+   Right = -Right
+   return CFrame.new(Orig.X,Orig.Y,Orig.Z,Right.X,Up.X,Forward.X,Right.Y,Up.Y,Forward.Y,Right.Z,Up.Z,Forward.Z)
+end
+ 
+function look(CFr,Vec2)
+   local A = Vector3.new(0,0,0)
+   local B = CFr:inverse()*Vec2
+   local CF = look2(A,Vector3.new(A.X,B.Y,B.Z))
+   if B.Z > 0 then
+       CF = CFr*(CF*CFrame.Angles(0,0,math.pi))
+   elseif B.Z == 0 then
+       if B.Y > 0 then
+           CF = CFr*CFrame.Angles(math.pi/2,0,0)
+       elseif B.Y < 0 then
+           CF = CFr*CFrame.Angles(-math.pi/2,0,0)
+       else
+           CF = CFr
+       end
+   end
+   local _,_,_,_,X,_,_,Y,_,_,Z,_ = CF:components()
+   local Up = Vector3.new(X,Y,Z)
+   local Forward = (Vec2-CFr.p).unit
+   local Right = Up:Cross(Forward)
+   Forward = -Forward
+   Right = -Right
+   return CFrame.new(CFr.X,CFr.Y,CFr.Z,Right.X,Up.X,Forward.X,Right.Y,Up.Y,Forward.Y,Right.Z,Up.Z,Forward.Z)
+end
+ 
+function simulate(j,d,m,r,t)
+       local joint = j
+       for i,v in ipairs(t) do
+               if v[1]:FindFirstChild("Weld") then
+                       local stiff = m.CFrame.lookVector*0.03
+                       if i > 1 then joint = t[i-1][1].CFrame*CFrame.new(0,0,d*.5) end
+                       local dir = (v[2].p-(joint.p+Vector3.new(0,0.2,0)+stiff)).unit
+                       local dis = (v[2].p-(joint.p+Vector3.new(0,0.2,0)+stiff)).magnitude
+                       local pos = joint.p+(dir*(d*0.5))
+                     --if v[1].CFrame.y<=workspace.Base.CFrame.y then pos = joint.p+(dir*(d*.5)) end
+                       local inv = v[1].Weld.Part0.CFrame
+                       local rel1 = inv:inverse()*pos
+                       local rel2 = inv:inverse()*(pos-(dir*dis))
+                       local cf = look(CFrame.new(rel1),rel2)--CFrame.new(pos,pos-(dir*dis))*CFrame.fromEulerAnglesXYZ(r.x,r.y,r.z)
+                       v[1].Weld.C0 = cf
+                       v[2] = inv*cf
+                       --v[1].CFrame = cf
+               end
+       end
+end
+for i=1,8 do
+local p = Instance.new("Part",char)
+p.Anchored = false
+p.BrickColor = BrickColor.new("Really black")
+p.CanCollide = false
+p.FormFactor="Custom"
+p.Material = "SmoothPlastic"
+p.TopSurface = "SmoothNoOutlines"
+p.BottomSurface = "SmoothNoOutlines"
+p.RightSurface = "SmoothNoOutlines"
+p.LeftSurface = "SmoothNoOutlines"
+p.FrontSurface = "SmoothNoOutlines"
+p.BackSurface = "SmoothNoOutlines"
+ 
+p.Size=Vector3.new(2,.2,0.2)
+p:BreakJoints() -- sometimes the parts are stuck to something so you have to breakjoints them
+mesh = Instance.new("BlockMesh",p)
+mesh.Scale = Vector3.new(1,1,3)
+local w = Instance.new("Motor6D",p)
+w.Part0 = aa1[i-1] and aa1[i-1][1] or UpperTorso
+w.Part1 = p
+w.Name = "Weld"
+--table.insert(aa1,p)
+aa1[i] = {p,p.CFrame}
+ 
+end
+game:service"RunService".Stepped:connect(function()
+simulate(UpperTorso.CFrame*CFrame.new(0,0.9,.5),.6,UpperTorso,Vector3.new(),aa1)
+end)
+
+
+mouse.KeyDown:connect(function(k)
+if k == "e" then
+      if debounce == true then
+        if Sit == false then
+attacking = true
+    sword.Touched:connect(function(hit)
+ 
+       
+						if hit.Parent == char then return end
+       if hit.Parent == workspace.Base then return end
+				for i,v in pairs(hit.Parent:GetChildren()) do
+					if v:IsA("Humanoid") then
+            if attacking == true then
+              
+                        ShowDamage((hit.CFrame * CFrame.new(0, 0, (hit.Size.Z / 2)).p + Vector3.new(0, 1.5, 0)), -30, 1.5, BrickColor.new("Toothpaste").Color)
+						v.Health = v.Health - 30
+             
+              end
+              
+        
+					end
+            end
+          
+end)
+attacking = false
+        debounce = false
+        idle = false
+        walk = false
+        walk2 = false
+        
+ for i = 1,3 do
+            LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(8.881), math.rad(3.552), math.rad(-12.261)),.5) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(5.443), math.rad(-13.35), math.rad(9.969)),.5)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(85.142),rad(0),rad(0)),.5)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(-7.448), math.rad(0), math.rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(10.643), math.rad(4.068), math.rad(0)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-7.678),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-24.752),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(5.558),rad(0),rad(0)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(math.rad(-11.803), math.rad(14.324), math.rad(2.979)),.5)--Head
+          Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(1.146), math.rad(-29.679), 0),.5)--UpperTorso
+          wait()
+          end
+         for i = 1,5 do
+            LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(8.881), math.rad(3.552), math.rad(-12.261)),.5) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(42.571), math.rad(-10.084), math.rad(-0.172)),.5)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(3.094),rad(0),rad(0)),.5)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(0), math.rad(23.09), math.rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(10.643), math.rad(4.068), math.rad(0)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-7.678),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-24.752),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(5.558),rad(0),rad(0)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(math.rad(19.251), math.rad(0), math.rad(0)),.5)--Head
+          Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(-35.924), math.rad(11.86), math.rad(8.824)),.5)--UpperTorso
+          wait()
+          end
+        idle = true
+        walk = true
+        walk2 = true
+        wait(0.1)
+        debounce = true
+          end
+      end
+      end
+    end)
+mouse.KeyDown:connect(function(key)
+    key = key:lower()
+    if key == "f" then
+      if debounce == true then
+        debounce = false
+        walk = false
+        walk1 = false
+        idle = false
+        
+      for i = 1,40 do
+RightHand.RightWrist.C0 = RightHand.RightWrist.C0:lerp(CFrame.new(0,-0.001+0.00*math.sin(tick()*5),0) * RightHand.RightWrist.C0 * CFrame.Angles(0, math.rad(90), 0), 0.1)
+           Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(0, math.rad(15.527), 0),.1)--UpperTorso
+           RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(88.694), math.rad(-4.584), math.rad(8.079)),.1)--RightUpperArm
+          LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(0, 0, math.rad(-17.876)),.1) --LeftUpperArm
+          RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--RightLowerArm
+        wait()
+      end
+        idle = true
+        walk = true
+        walk1 = true
+        wait(0.1)
+        debounce = true
+        end
+      end
+    end)
+
+local sitdebounce = true
+mouse.KeyDown:connect(function(key)
+    key = key:lower()
+    if key == "g" then
+if sitdebounce == true then
+
+        if Sit == false then
+       sitdebounce = false
+        Sit = true
+ idle = false
+        walk = false
+        walk1 = false
+      for i  = 1,15 do
+LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(8.995), math.rad(-22.173), math.rad(-14.381)),.1) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(0),rad(0),rad(18.507)),.1)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(42.055),rad(0),rad(0)),.1)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(44.748),rad(0),rad(0)),.1)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(73.854),rad(0),rad(0)),.1)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-74.485),rad(0),rad(0)),.1)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-89.668),rad(0),rad(0)),.1)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,-0.618,0)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--Head
+             Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(-4.641), math.rad(-0.115), math.rad(1.089)),.1)--UpperTorso
+          wait()
+        end
+              for i  = 1,20 do
+LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(53.113), math.rad(-75.401), math.rad(24.179)),.1) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(0),rad(0),rad(18.507)),.1)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(25.096),rad(0),rad(0)),.1)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(107.029),rad(0),rad(0)),.1)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(101.471), 0, math.rad(19.71)),.1)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(math.rad(0), 0, 0),.1)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,-1.597,0)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(12.376),rad(0),rad(0)),.1)--Head
+                     Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(-4.641), math.rad(-0.115), math.rad(1.089)),.1)--UpperTorso
+          wait()
+        end
+wait(1)
+sitdebounce = true
+       else
+                Sit = false
+     for i  = 1,9 do
+LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(8.995), math.rad(-22.173), math.rad(-14.381)),.1) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(0),rad(0),rad(18.507)),.1)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(42.055),rad(0),rad(0)),.1)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(44.748),rad(0),rad(0)),.1)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(73.854),rad(0),rad(0)),.1)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-74.485),rad(0),rad(0)),.1)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-89.668),rad(0),rad(0)),.1)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,-0.618,0)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.1)--Head
+             Waist.C0 = Waist.C0:lerp(CFrame.new( Waist.C0.p)*CFrame.Angles(math.rad(-4.641), math.rad(-0.115), math.rad(1.089)),.1)--UpperTorso
+          wait()
+        end
+        walk = true
+        walk1 = true
+        idle = true
+      end
+    end
+end
+      end)
+local UIS = game:GetService('UserInputService')
+local Player = game.Players.LocalPlayer
+local Character = Player.Character
+UIS.InputBegan:connect(function(input)
+if input.KeyCode == Enum.KeyCode.LeftControl then
+      Sprint = true
+        walkon1 = true
+      idle = false
+      walk = false
+      walk1 = false
+      
+Character.Humanoid.WalkSpeed = 30
+
+end
+end)
+UIS.InputEnded:connect(function(input)
+if input.KeyCode == Enum.KeyCode.LeftControl then
+Character.Humanoid.WalkSpeed = 16
+            
+Sprint = false
+        walkon1 = false
+      idle = true
+      walk = true
+      walk1 = true
+end
+end)
+
+
+local bladehitsnd = new("Sound",char)
+bladehitsnd.Volume = 1
+bladehitsnd.SoundId = "rbxassetid://257001402"
+
+kiblade2 = Instance.new("Part",char)
+kiblade2.Name = "Blade"
+kiblade2.Size = v3(1,1,1)
+kiblade2.Transparency = 1
+kiblade2.Position = v3(999,999,999)
+kiblade2.CanCollide = false
+kiblademesh = Instance.new("SpecialMesh",kiblade2)
+kiblademesh.MeshType = "Sphere"
+kiblademesh.Scale = v3(1,1,1)
+kiweld = Instance.new("Weld",kiblade2)
+kiweld.Part0 = char["RightHand"]
+kiweld.Part1 = kiblade2
+kiweld.C0 = CFrame.new(0,-4,0)
+kiweld.C1=euler(rad(270),rad(90),rad(0))
+
+  kiblade2.Name = "kiblade2"
+  torso1 = Instance.new("Attachment",sword)
+head1 = Instance.new("Attachment",kiblade2)
+  trail = Instance.new("Trail",sword)
+  trail.Color = ColorSequence.new(Color3.new(1, 1, 1))
+trail.Attachment0 = torso1
+trail.Attachment1 = head1
+trail.Lifetime = 1
+trail.Enabled = false
+function UpperSlash()
+idle = false
+  walk = false
+  walk1 = false
+
+
+trail.Enabled = true
+local hitboxx = Instance.new("Part",char)
+  hitboxx.Transparency = 1
+  ecksdee = Instance.new("SpecialMesh",hitboxx)
+  ecksdee.MeshType = "FileMesh"
+ecksdee.MeshId = "rbxassetid://898849476"
+  hitboxxw = Instance.new("Weld",hitboxx)
+hitboxxw.Part0 = char["RightHand"]
+hitboxxw.Part1 = hitboxx
+hitboxxw.C0 = CFrame.new(0,-1,0)
+  
+hitboxx.Touched:connect(function(hit)
+		
+		
+				for i,v in pairs(hit.Parent:GetChildren()) do
+        if hit.Parent == char then return end
+					if v:IsA("Humanoid") then
+						v.Health = v.Health - 10
+					ShowDamage((hit.CFrame * CFrame.new(0, 0, (hit.Size.Z / 2)).p + Vector3.new(0, 1.5, 0)), -30, 1.5, BrickColor.new("Toothpaste").Color)
+
+ 
+				end
+        hitboxx:destroy()
+			end
+		end)
+  for i = 1,5 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(rad(0),rad(0),rad(-20.856)),.5) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(46.41),rad(-21.887),rad(-23.72)),.5)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(-180.023),rad(88.637),rad(-159.053)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(0),rad(11.058),rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(8.021),rad(-17.017),rad(2.349)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-13.178),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-22.403),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(0),rad(18.277),rad(0)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(-24.523),rad(0)),.5)--Head
+        Waist.C0 = Waist.C0:lerp(CFrame.new(Waist.C0.p)*CFrame.Angles(rad(0),rad(50.148),rad(0)),.5)
+        wait()
+end
+    for i = 1,5 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(rad(0),rad(0),rad(-20.856)),.5) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(122.842),rad(11.115),rad(60.562)),.5)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(-180.023),rad(88.637),rad(-159.053)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(0),rad(11.058),rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(8.021),rad(-17.017),rad(2.349)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-13.178),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-22.403),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(0),rad(0.745),rad(0)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(1.948),rad(0)),.5)--Head
+        Waist.C0 = Waist.C0:lerp(CFrame.new(Waist.C0.p)*CFrame.Angles(rad(0.229),rad(-9.339),rad(-2.235)),.5)
+        wait()
+end
+  bladehitsnd:Play()
+      for i = 1,10 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(rad(0),rad(0),rad(-20.856)),.5) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(122.842),rad(11.115),rad(60.562)),.5)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(-180.023),rad(88.637),rad(-159.053)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(0),rad(11.058),rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(8.021),rad(-17.017),rad(2.349)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-13.178),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-22.403),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,5,0)*CFrame.Angles(rad(0),rad(0.745),rad(0)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(1.948),rad(0)),.5)--Head
+        Waist.C0 = Waist.C0:lerp(CFrame.new(Waist.C0.p)*CFrame.Angles(rad(0.229),rad(-9.339),rad(-2.235)),.5)
+        wait()
+end
+  for i = 1,30 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(rad(-12.72),rad(0),rad(0)),1) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(111.841),rad(0),rad(-31.054)),1)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),1)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),1)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),1)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(40.623),rad(0),rad(0)),1)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-22.575),rad(0),rad(0)),1)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-37.414),rad(0),rad(0)),1)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,-0.417,0)*CFrame.Angles(rad(0),rad(0),rad(0)),1)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),1)--Head
+       Waist.C0 = Waist.C0:lerp(CFrame.new(Waist.C0.p)*CFrame.Angles(rad(-59.53),rad(8.079),rad(7.448)),.5)
+       RightHand.RightWrist.C0 = RightHand.RightWrist.C0:lerp(CFrame.new(RightHand.RightWrist.C0.p)*CFrame.Angles(rad(-90),rad(0),rad(0)),.5)
+    wait()
+end
+
+  trail.Enabled = false
+  idle = true
+  walk = true
+  walk1 = true
+  end
+mouse.KeyDown:connect(function(k)
+if k == "t" then
+    UpperSlash()
+      end
+    end)
+function BackStep()
+  idle = false
+  walk = false
+  walk1 = false
+  for i = 1,5 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(2.349), 0, math.rad(-19.882)),.5) --LeftUpperArm
+
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(20.741),rad(0),rad(0)),.5)--LeftLowerArm
+   
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(-29.335),rad(0),rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(0),rad(0),rad(19.366)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-19.309),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-6.532),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(8.251),rad(0),rad(0)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(-11.631),rad(0),rad(0)),.5)--Head
+     Waist.C0 = Waist.C0:lerp(CFrame.new(Waist.C0.p)*CFrame.Angles(rad(8.136),rad(0),rad(0)),.5)
+    wait()
+end
+		local bodyp=Instance.new("BodyPosition",char.HumanoidRootPart)
+		bodyp.MaxForce=Vector3.new(math.huge,math.huge,math.huge)
+		bodyp.D=1000
+      			bodyp.Position=(char.HumanoidRootPart.CFrame*CFrame.new(0,0,30)).p
+
+		wait(0.5)
+		bodyp:Destroy()
+  idle = true
+  walk = true
+  walk1 = true
+  end
+mouse.KeyDown:connect(function(k)
+if k == "v" then
+    BackStep()
+      end
+    end)
+function DashUpward()
+  if debounce == true then
+    debounce = false
+    idle = false
+    walk = false
+    walk1 = false
+  for i = 1,5 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(9.798), math.rad(-4.354), math.rad(-23.835)),.5) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(91.444), math.rad(88.293), 0),.5)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(9.683),rad(0),rad(0)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(4.354),rad(0),rad(0)),.5)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(-36.956),rad(0),rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(77.063),rad(0),rad(0)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-5.901),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-108.461),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(math.rad(-12.892), math.rad(4.756), math.rad(0.573)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(-27.273),rad(0)),.5)--Head
+     Waist.C0 = Waist.C0:lerp(CFrame.new(Waist.C0.p)*CFrame.Angles(rad(0),rad(27.846),rad(0)),.5)
+    wait()
+    
+end
+  local bodyp=Instance.new("BodyPosition",char.HumanoidRootPart)
+		bodyp.MaxForce=Vector3.new(math.huge,math.huge,math.huge)
+		bodyp.D=1000
+      			bodyp.Position=(char.HumanoidRootPart.CFrame*CFrame.new(0,0,-30)).p
+
+		wait(0.5)
+		bodyp:Destroy()
+    idle = true
+    walk = true
+    walk1 = true
+    wait(0.1)
+    debounce = true
+    end
+  end
+mouse.KeyDown:connect(function(k)
+if k == "c" then
+    DashUpward()
+      end
+    end)
+function LeftStep()
+  if debounce == true then
+    debounce = false
+    idle = false
+    walk = false
+    walk1 = false
+
+     local bodyp=Instance.new("BodyPosition",char.HumanoidRootPart)
+		bodyp.MaxForce=Vector3.new(math.huge,math.huge,math.huge)
+		bodyp.D=1000
+      			bodyp.Position=(char.HumanoidRootPart.CFrame*CFrame.new(-30,0,0)).p
+for i = 1,5 do
+  
+      Root.C0 = Root.C0:lerp(CFrame.new(0,-0.001+0.00*math.sin(tick()*5),0) * Root.C0 * CFrame.Angles(0, math.rad(140), 0), 0.5)
+  wait()
+end
+		wait(0.5)
+		bodyp:Destroy()
+    idle = true
+    walk = true
+    walk1 = true
+    wait(0.1)
+    debounce = true
+  end
+  end
+function RightStep()
+  if debounce == true then
+    debounce = false
+    idle = false
+    walk = false
+    walk1 = false
+
+     local bodyp=Instance.new("BodyPosition",char.HumanoidRootPart)
+		bodyp.MaxForce=Vector3.new(math.huge,math.huge,math.huge)
+		bodyp.D=1000
+      			bodyp.Position=(char.HumanoidRootPart.CFrame*CFrame.new(30,0,0)).p
+for i = 1,5 do
+  
+      Root.C0 = Root.C0:lerp(CFrame.new(0,-0.001+0.00*math.sin(tick()*5),0) * Root.C0 * CFrame.Angles(0, math.rad(-140), 0), 0.5)
+  wait()
+end
+		wait(0.5)
+		bodyp:Destroy()
+    idle = true
+    walk = true
+    walk1 = true
+    wait(0.1)
+    debounce = true
+  end
+  end
+function Stab()
+ if debounce == true then
+    debounce = false
+    idle = false
+    walk = false
+    walk1 = false
+    
+
+    for i = 1,5 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(120.951), math.rad(-41.081), math.rad(49.504)),.5) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(46.123), math.rad(-85.027), math.rad(142.724)),.5)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(30.653),rad(0),rad(0)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(math.rad(88.694), math.rad(0.63), 0),.5)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(30.195),rad(0),rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(-20.97),rad(0),rad(0)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-24.179),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-14.954),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--Head
+           Waist.C0 = Waist.C0:lerp(CFrame.new(Waist.C0.p)*CFrame.Angles(rad(0),rad(-19.137),rad(0)),.5)
+       RightHand.RightWrist.C0:lerp(CFrame.new(RightHand.RightWrist.C0.p)*CFrame.Angles(rad(-25.898),rad(0),rad(0)),.5)
+  wait()
+end
+    trail.Enabled = true
+    local hitboxx = Instance.new("Part",char)
+  hitboxx.Transparency = 1
+  ecksdee = Instance.new("SpecialMesh",hitboxx)
+  ecksdee.MeshType = "FileMesh"
+ecksdee.MeshId = "rbxassetid://898849476"
+  hitboxxw = Instance.new("Weld",hitboxx)
+hitboxxw.Part0 = char["RightHand"]
+hitboxxw.Part1 = hitboxx
+hitboxxw.C0 = CFrame.new(0,-1,0)
+hitboxx.Touched:connect(function(hit)
+		
+		
+				for i,v in pairs(hit.Parent:GetChildren()) do
+        if hit.Parent == char then return end
+					if v:IsA("Humanoid") then
+						v.Health = v.Health - 10
+					
+
+ 
+				end
+        hitboxx:destroy()
+			end
+		end)
+        for i = 1,30 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(math.rad(30.023), math.rad(-3.61), math.rad(-39.305)),.3) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(math.rad(83.193), math.rad(-2.979), math.rad(-2.807)),.3)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(30.653),rad(0),rad(0)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(math.rad(2.349), 0, math.rad(0.63)),.3)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(math.rad(-12.261), 0, 0),.3)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(math.rad(0), 0, 0),.3)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(-24.179),rad(0),rad(0)),.3)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(-14.954),rad(0),rad(0)),.3)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(0),rad(1.146),rad(0)),.3)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(-20.225),rad(0)),.3)--Head
+                 Waist.C0 = Waist.C0:lerp(CFrame.new(Waist.C0.p)*CFrame.Angles(math.rad(-2.063), math.rad(17.418), math.rad(-0.172)),.3)
+RightHand.RightWrist.C0 = RightHand.RightWrist.C0:lerp(CFrame.new(0,-0.001+0.00*math.sin(tick()*5),0) * RightHand.RightWrist.C0 * CFrame.Angles(math.rad(-120), math.rad(0), 0), 0.3)
+  wait()
+end
+    idle = true
+    walk = true
+    walk1 = true
+    
+trail.Enabled = false
+    wait(0.1)
+    debounce = true
+  end
+end
+mouse.KeyDown:connect(function(k)
+if k == "z" then
+    LeftStep()
+      end
+    end)
+mouse.KeyDown:connect(function(k)
+if k == "x" then
+    RightStep()
+      end
+    end)
+mouse.KeyDown:connect(function(k)
+if k == "u" then
+    Stab()
+      end
+    end)
+
+ DayNightCycle =        true  --[1] Cycles through day and night.
+
+DynamicLighting =      true  --[2] Give your game a dynamic look?
+SimulatedShadows =     true  --[3] Make the shadows stand out.  (Enable [2] for this to work)
+
+DarkAmbient =          false --[4] Gives your game darkness, great for zombie games.
+AmbientBrightness =    0     --[5] Number Must between 0 to 255.  (Enable [2] and [4] for this to work)
+
+Fog =                  true  --[6] Give your game foggy look.
+FogDistance =          1500  --[7] How far will the fog be away from you. (Enable [6] for this to work)
+---------------------------------------------------------------------------------------------------------------
+
+if Fog then
+	game.Lighting.FogEnd = FogDistance
+end
+
+if DarkAmbient and DynamicLighting then
+	game.Lighting.OutdoorAmbient = Color3.new(AmbientBrightness/255, AmbientBrightness/255, AmbientBrightness/255)
+end
+
+if DynamicLighting then
+	game.Lighting.GlobalShadows = true
+	if SimulatedShadows then
+		game.Lighting.Brightness = 1.5
+		game.Lighting.Ambient = Color3.new(0/255, 0/255, 0/255)
+		game.Lighting.ShadowColor = Color3.new(61/255, 61/255, 61/255)
+	end
+end
+
+
+
+spawn(function() --_RHas
+	local ef1=Instance.new('Part',char.LeftHand)
+	local am=Instance.new('BlockMesh',ef1)
+	ef1.Anchored,ef1.CanCollide=false,false
+	ef1.Transparency=0.5
+	ef1.Material = "Neon"
+	am.Scale=Vector3.new(5.5,5.5,5.5)
+	ef1.Size=Vector3.new(.2,.2,.2)
+	local ef2=ef1:Clone()
+	local ef3=ef2:Clone()
+	local ef4=ef3:Clone()
+	ef2.Material = "Neon"
+	ef3.Material = "Neon"
+	ef4.Material = "Neon"
+	ef3.Parent,ef4.Parent=char.LeftHand,char.LeftHand
+	ef2.Parent=char.LeftHand
+	local wa,wb=Instance.new('Weld',RightHand),Instance.new('Weld',char.LeftHand)
+	local wc,wd=Instance.new('Weld',RightHand),Instance.new('Weld',char.LeftHand)
+	wa.Part0,wb.Part0=char.LeftHand,char.LeftHand
+	wa.Part1,wb.Part1=ef1,ef2
+	wc.Part0,wd.Part0=char.LeftHand,char.LeftHand
+	wc.Part1,wd.Part1=ef3,ef4
+	wa.C0,wb.C0=CFrame.new(0,-1,0),CFrame.new(0,-1,0)
+	wc.C0,wd.C0=CFrame.new(0,-1,0),CFrame.new(0,-1,0)
+	while wait(0) do
+		wa.C0,wb.C0=wa.C0*CFrame.Angles(math.rad(math.random(-20,20)),math.rad(math.random(-20,20)),math.rad(math.random(-20,20))),wb.C0*CFrame.Angles(math.rad(math.random(-20,20)),math.rad(math.random(-20,20)),math.rad(math.random(-20,20)))
+		wc.C0,wd.C0=wc.C0*CFrame.Angles(math.rad(math.random(-20,20)),math.rad(math.random(-20,20)),math.rad(math.random(-20,20))),wd.C0*CFrame.Angles(math.rad(math.random(-20,20)),math.rad(math.random(-20,20)),math.rad(math.random(-20,20)))
+		ef1.BrickColor=BrickColor.new("Toothpaste")
+		ef3.BrickColor=BrickColor.new("Carnation pink")
+		ef4.BrickColor=BrickColor.new("White")
+		ef2.BrickColor=BrickColor.new("Really red")
+
+	end
+end)
+function UpSlashCombo()
+getplayer = new("Part",char)
+getplayer.Position = Vector3.new(999,999,999)
+getplayer.Transparency = 1
+getplayer.Size = v3(3,3,3)
+getplayer.CanCollide = false
+getplayer.CFrame = RootPart.CFrame + RootPart.CFrame.lookVector*3
+getplayer.Name = "GetPlayer"
+
+game.Debris:AddItem(getplayer,0.5)
+
+getplayer.Touched:connect(function(hit)
+      if hit.Parent == char then return end
+			if hit.Parent:FindFirstChild("GetPlayer") == nil and hit.Parent:findFirstChild("HumanoidRootPart") ~= nil then
+				getplayer:Destroy()
+        	idle = false
+                for i = 1,5 do
+    LeftShoulder.C0 = LeftShoulder.C0:lerp(CFrame.new(LeftShoulder.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5) --LeftUpperArm
+    RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(90),rad(0),rad(0)),.5)--RightUpperArm
+    LeftElbow.C0 = LeftElbow.C0:lerp(CFrame.new(LeftElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--LeftLowerArm
+    RightElbow.C0 = RightElbow.C0:lerp(CFrame.new(RightElbow.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--RightLowerArm
+    LeftHip.C0 = LeftHip.C0:lerp(CFrame.new(LeftHip.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--LeftUpperLeg
+    RightHip.C0 = RightHip.C0:lerp(CFrame.new(RightHip.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--RightUpperLeg
+    LeftKnee.C0 = LeftKnee.C0:lerp(CFrame.new( LeftKnee.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--LeftLowerLeg
+    RightKnee.C0 = RightKnee.C0:lerp(CFrame.new(RightKnee.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--RightUpperLeg
+    Root.C0 = Root.C0:lerp(CFrame.new(0,0,0)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--Torso
+    Neck.C0 = Neck.C0:lerp(CFrame.new( Neck.C0.p)*CFrame.Angles(rad(0),rad(0),rad(0)),.5)--Head
+          RightHand.RightWrist.C0 = RightHand.RightWrist.C0:lerp(CFrame.new(0,-0.001+0.00*math.sin(tick()*5),0) * RightHand.RightWrist.C0 * CFrame.Angles(math.rad(-180), math.rad(0), 0), 0.3)
+  wait()
+end
+				to = hit.Parent:findFirstChild("HumanoidRootPart")
+				   local bodyp=Instance.new("BodyPosition",to)
+		bodyp.MaxForce=Vector3.new(math.huge,math.huge,math.huge)
+		bodyp.D=1000
+      			bodyp.Position=(char.HumanoidRootPart.CFrame*CFrame.new(0,10,-3)).p
+	
+				   local bodyp2=Instance.new("BodyPosition",char.HumanoidRootPart)
+		bodyp2.MaxForce=Vector3.new(math.huge,math.huge,math.huge)
+		bodyp2.D=1000
+      			bodyp2.Position=(to.CFrame*CFrame.new(0,10,-4)).p
+ for i = 1,5 do
+           RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(0),rad(0),rad(90)),.5)--RightUpperArm
+          wait()
+          end
+         for i = 1,5 do
+           RightShoulder.C0 = RightShoulder.C0:lerp(CFrame.new(RightShoulder.C0 .p)*CFrame.Angles(rad(90),rad(90),rad(10)),.5)--RightUpperArm
+          wait()
+          end
+	wait(3)
+        bodyp:destroy()
+        bodyp2:destroy()
+        idle = true
+
+        
+        end
+      end)
+  
+  end
+mouse.KeyDown:connect(function(k)
+if k == "b" then
+    UpSlashCombo()
+      end
+    end)
+
+print("Press z to dodge left")
+print("Press x to dodge right")
+print("press c to dash forward")
+print("press v to dodge back")
+print("Press f for sword taunt")
+print("press t for sword upperattack")
+print("Press G to Sit")
+print("Hold ctrl for run stance")
+print("Hold ctrl and move to run")
+print("Made by xXVipergamerXx1 for the GiveAway! Enjoy!")
