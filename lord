@@ -1,0 +1,1892 @@
+local Global = (getgenv and getgenv()) or shared --made by gelatek
+Global.GelatekReanimateConfig = {
+    -- [[ Rig Settings ]] --
+    ["AnimationsDisabled"] = true,
+    ["R15ToR6"] = true,
+    ["DontBreakHairWelds"] = false,
+    ["PermanentDeath"] = true,
+    ["Headless"] = false,
+    ["TeleportBackWhenVoided"] = false,
+    
+    -- [[ Reanimation Settings ]] --
+    ["AlignReanimate"] = true,
+    ["FullForceAlign"] = true,
+    ["FasterHeartbeat"] = true,
+    ["DynamicalVelocity"] = true,
+    ["DisableTweaks"] = true,
+    
+    -- [[ Optimization ]] --
+    ["OptimizeGame"] = false,
+
+    -- [[ Miscellacious ]] --
+    ["LoadLibrary"] = true,
+    ["DetailedCredits"] = false,
+    
+    -- [[ Flinging Methods ]] --
+    ["TorsoFling"] = true,
+    ["BulletEnabled"] = true,
+    ["BulletConfig"] = {
+        ["RunAfterReanimate"] = true,
+        ["LockBulletOnTorso"] = false
+    }
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Gelatekussy/GelatekReanimate/main/Main.lua"))()
+wait(8)
+
+Player=game:GetService("Players").LocalPlayer
+Character=Player.Character 
+PlayerGui=Player.PlayerGui 
+Backpack=Player.Backpack 
+Torso=Character.Torso 
+Head=Character.Head 
+Humanoid=Character.Humanoid
+m=Instance.new('Model',Character)
+LeftArm=Character["Left Arm"] 
+LeftLeg=Character["Left Leg"] 
+RightArm=Character["Right Arm"] 
+RightLeg=Character["Right Leg"] 
+LS=Torso["Left Shoulder"] 
+LH=Torso["Left Hip"] 
+RS=Torso["Right Shoulder"] 
+RH=Torso["Right Hip"] 
+Face = Head.face
+Neck=Torso.Neck
+it=Instance.new
+attacktype=1
+vt=Vector3.new
+cf=CFrame.new
+euler=CFrame.fromEulerAnglesXYZ
+angles=CFrame.Angles
+cloaked=false
+necko=cf(0, 1, 0, -1, -0, -0, 0, 0, 1, 0, 1, 0)
+necko2=cf(0, -0.5, 0, -1, -0, -0, 0, 0, 1, 0, 1, 0)
+LHC0=cf(-1,-1,0,-0,-0,-1,0,1,0,1,0,0)
+LHC1=cf(-0.5,1,0,-0,-0,-1,0,1,0,1,0,0)
+RHC0=cf(1,-1,0,0,0,1,0,1,0,-1,-0,-0)
+RHC1=cf(0.5,1,0,0,0,1,0,1,0,-1,-0,-0)
+RootPart=Character.HumanoidRootPart
+RootJoint=RootPart.RootJoint
+RootCF=euler(-1.57,0,3.14)
+attack = false 
+attackdebounce = false 
+deb=false
+equipped=true
+hand=false
+MMouse=nil
+combo=0
+mana=0
+trispeed=1
+pathtrans=.7
+attackmode='none'
+local idle=0
+local Anim="Idle"
+local Effects={}
+local gun=false
+local shoot=false
+player=nil 
+cloak=false
+
+
+----------------------------------------
+local p = game.Players.LocalPlayer
+local char = p.Character
+local mouse = p:GetMouse()
+local larm = char["Left Arm"]
+local rarm = char["Right Arm"]
+local lleg = char["Left Leg"]
+local rleg = char["Right Leg"]
+local hed = char.Head
+local torso = char.Torso
+local hum = char.Humanoid
+local cam = game.Workspace.CurrentCamera
+local root = char.HumanoidRootPart
+local rj = root.RootJoint
+local deb = false
+local shot = 0
+local stanceToggle = "Idle1"
+local l = game:GetService("Lighting")
+local rs = game:GetService("RunService").RenderStepped
+local hb = game:GetService("RunService").Heartbeat
+local Stepped = game:GetService("RunService").Stepped
+math.randomseed(os.time())
+----------------------------------------------------
+fat = Instance.new("BindableEvent",script)
+fat.Name = "Heartbeat"
+
+script:WaitForChild("Heartbeat")
+
+frame = 1/30
+tf = 0
+allowframeloss = false --if set to true will fire every frame it possibly can. This will result in multiple events happening at the same time whenever delta returns frame*2 or greater.
+tossremainder = false --if set to true t will be set to 0 after Fire()-ing.
+lastframe = tick()
+script.Heartbeat:Fire() --ayy lmao
+
+game:GetService("RunService").Heartbeat:connect(function(s,p) --herp derp
+	tf = tf + s
+	if tf >= frame then
+		if allowframeloss then
+			script.Heartbeat:Fire()
+			lastframe=tick()
+		else
+			--print("FIRED "..math.floor(t/frame).." FRAME(S)","REMAINDER "..(t - frame*(math.floor(t/frame))))
+			for i=1, math.floor(tf/frame) do
+				script.Heartbeat:Fire()
+			end
+			lastframe=tick()
+		end
+		if tossremainder then
+			tf = 0
+		else
+			tf = tf - frame * math.floor(tf/frame)
+		end
+	end
+end)
+
+function Swait(NUMBER)
+	if NUMBER == 0 or NUMBER == nil then
+		fat.Event:wait()
+	else
+		for i = 1, NUMBER do
+			fat.Event:wait()
+		end
+	end
+end
+----------------------------------------------------
+Debounces = {
+CanAttack = true;
+CanJoke = true;
+NoIdl = false;
+Slashing = false;
+Slashed = false;
+ks = false;
+}
+----------------------------------------------------
+
+function lerp(a, b, t) -- Linear interpolation
+	return a + (b - a)*t
+end
+ 
+function slerp(a, b, t) --Spherical interpolation
+	dot = a:Dot(b)
+	if dot > 0.99999 or dot < -0.99999 then
+		return t <= 0.5 and a or b
+	else
+		r = math.acos(dot)
+		return (a*math.sin((1 - t)*r) + b*math.sin(t*r)) / math.sin(r)
+	end
+end
+ 
+function matrixInterpolate(a, b, t)
+	local ax, ay, az, a00, a01, a02, a10, a11, a12, a20, a21, a22 = a:components()
+	local bx, by, bz, b00, b01, b02, b10, b11, b12, b20, b21, b22 = b:components()
+	local v0 = lerp(Vector3.new(ax, ay, az), Vector3.new(bx , by , bz), t) -- Position
+	local v1 = slerp(Vector3.new(a00, a01, a02), Vector3.new(b00, b01, b02), t) -- Vector  right
+	local v2 = slerp(Vector3.new(a10, a11, a12), Vector3.new(b10, b11, b12), t) -- Vector  up
+	local v3 = slerp(Vector3.new(a20, a21, a22), Vector3.new(b20, b21, b22), t) -- Vector  back
+	local t = v1:Dot(v2)
+	if not (t < 0 or t == 0 or t > 0) then 	-- Failsafe
+		return CFrame.new()
+	end
+	return CFrame.new(
+	v0.x, v0.y, v0.z,
+	v1.x, v1.y, v1.z,
+	v2.x, v2.y, v2.z,
+	v3.x, v3.y, v3.z)
+end
+----------------------------------------------------
+function genWeld(a,b)
+    local w = Instance.new("Weld",a)
+    w.Part0 = a
+    w.Part1 = b
+    return w
+end
+function weld(a, b)
+    local weld = Instance.new("Weld")
+    weld.Name = "W"
+    weld.Part0 = a
+    weld.Part1 = b
+    weld.C0 = a.CFrame:inverse() * b.CFrame
+    weld.Parent = a
+    return weld;
+end
+----------------------------------------------------
+function Lerp(c1,c2,al)
+	local com1 = {c1.X,c1.Y,c1.Z,c1:toEulerAnglesXYZ()}
+	local com2 = {c2.X,c2.Y,c2.Z,c2:toEulerAnglesXYZ()}
+	for i,v in pairs(com1) do 
+		com1[i] = v+(com2[i]-v)*al
+	end
+	return CFrame.new(com1[1],com1[2],com1[3]) * CFrame.Angles(select(4,unpack(com1)))
+end
+----------------------------------------------------
+newWeld = function(wp0, wp1, wc0x, wc0y, wc0z)
+	local wld = Instance.new("Weld", wp1)
+	wld.Part0 = wp0
+	wld.Part1 = wp1
+	wld.C0 = CFrame.new(wc0x, wc0y, wc0z)
+end
+----------------------------------------------------
+newWeld(torso, larm, -1.5, 0.5, 0)
+larm.Weld.C1 = CFrame.new(0, 0.5, 0)
+newWeld(torso, rarm, 1.5, 0.5, 0)
+rarm.Weld.C1 = CFrame.new(0, 0.5, 0)
+newWeld(torso, hed, 0, 1.5, 0)
+newWeld(torso, lleg, -0.5, -1, 0)
+lleg.Weld.C1 = CFrame.new(0, 1, 0)
+newWeld(torso, rleg, 0.5, -1, 0)
+rleg.Weld.C1 = CFrame.new(0, 1, 0)
+newWeld(root, torso, 0, -1, 0)
+torso.Weld.C1 = CFrame.new(0, -1, 0)
+----------------------------------------------------
+
+----------------------------------------------------
+
+---{{Right Arm}}--------
+
+
+
+
+----{{ Right Leg }}------
+--Created with PenguinAnonymous's compiler
+--PenguinAnonymous is not responsible for damages caused to your game
+--This plugin does not remove things
+--PenguinAnonymous cannot be held resonsible for manual deletion for the purpose of testing
+--Keep in mind, any items that cause errors in compilation will be skipped and documented within the last line of the disclaimer comments
+--Thank you for using my plugin and enjoy :)
+--It is free to use
+--If you use this plugin to create your own, please give me credit
+--Z_V edited my plugin to look like his own and published it without giving me credit, and that makes me very angry
+--Errors: 
+
+
+
+
+
+----{{ Left Leg}}--------
+
+
+
+
+-----{{ Left Arm}}------
+
+
+
+
+
+
+
+
+
+
+
+IT = Instance.new
+CF = CFrame.new
+VT = Vector3.new
+RAD = math.rad
+C3 = Color3.new
+UD2 = UDim2.new
+BRICKC = BrickColor.new
+ANGLES = CFrame.Angles
+EULER = CFrame.fromEulerAnglesXYZ
+COS = math.cos
+ACOS = math.acos
+SIN = math.sin
+ASIN = math.asin
+ABS = math.abs
+MRANDOM = math.random
+FLOOR = math.floor
+
+
+function NoOutlines(PART)
+	PART.TopSurface, PART.BottomSurface, PART.LeftSurface, PART.RightSurface, PART.FrontSurface, PART.BackSurface = 10, 10, 10, 10, 10, 10
+end
+
+function CreatePart(FORMFACTOR, PARENT, MATERIAL, REFLECTANCE, TRANSPARENCY, BRICKCOLOR, NAME, SIZE)
+	local NEWPART = IT("Part")
+	NEWPART.formFactor = FORMFACTOR
+	NEWPART.Reflectance = REFLECTANCE
+	NEWPART.Transparency = TRANSPARENCY
+	NEWPART.CanCollide = false
+	NEWPART.Locked = true
+	NEWPART.BrickColor = BRICKC(tostring(BRICKCOLOR))
+	NEWPART.Name = NAME
+	NEWPART.Size = SIZE
+	NEWPART.Position = Torso.Position
+	NoOutlines(NEWPART)
+	NEWPART.Material = MATERIAL
+	NEWPART:BreakJoints()
+	NEWPART.Parent = PARENT
+	return NEWPART
+end
+
+function CreateSound(ID, PARENT, VOLUME, PITCH)
+	coroutine.resume(coroutine.create(function()
+		local NEWSOUND = IT("Sound", PARENT)
+		NEWSOUND.Volume = VOLUME
+		NEWSOUND.Pitch = PITCH
+		NEWSOUND.SoundId = "http://www.roblox.com/asset/?id="..ID
+		Swait()
+		NEWSOUND:play()
+		game:GetService("Debris"):AddItem(NEWSOUND, 10)
+	end))
+end
+
+
+function Raycast(POSITION, DIRECTION, RANGE, IGNOREDECENDANTS)
+	return workspace:FindPartOnRay(Ray.new(POSITION, DIRECTION.unit * RANGE), IGNOREDECENDANTS)
+end
+
+function FirePillar(POSITION1, POSITION2, SIZE, RISE, RANGE, LOWDAMAGE, HIGHDAMAGE, LASTINGTIME)
+	local POS1 = POSITION1
+	local POS2 = POSITION2
+	local MOUSELOOK = CF((POS1 + POS2) / 2, POS2)
+	local FIREPILLARHITSOUNDS = {"171378971", --[["646619365",--]] "472579737"--[[, "144140670"--]]}
+	local FIREPILLARCOLORS = {"Really black", "Black", "Deep orange"}
+	local FIREPILLAR1HIT, FIREPILLAR1POS = Raycast(POS1, MOUSELOOK.lookVector, RANGE * Player_Size, Character)
+	local FirePillarRefpart1 = CreatePart(3, Effects, "SmoothPlastic", 0, 1, "Really black", "Effect", VT())
+	FirePillarRefpart1.Anchored = true
+	FirePillarRefpart1.CFrame = CF(FIREPILLAR1POS) * CF(0, 10, 0)
+	game:GetService("Debris"):AddItem(FirePillarRefpart1, 5)
+	local FIREPILLAR2HIT, FIREPILLAR2POS = Raycast(FirePillarRefpart1.Position, CF(FirePillarRefpart1.Position, FirePillarRefpart1.Position + VT(0, -1, 0)).lookVector, 999, Character)
+	if FIREPILLAR2HIT ~= nil then
+		FirePillarRefpart1.Parent = nil
+		local FirePillarRefpart2 = CreatePart(3, Effects, "SmoothPlastic", 0, 1, "Really black", "Effect", VT())
+		FirePillarRefpart2.Anchored = true
+		FirePillarRefpart2.CFrame = CF(FIREPILLAR2POS)
+		game:GetService("Debris"):AddItem(FirePillarRefpart2, 5)
+		CreateSound(FIREPILLARHITSOUNDS[MRANDOM(1, #FIREPILLARHITSOUNDS)], FirePillarRefpart2, 1.2, MRANDOM(11, 13) / 10)
+		for i = 1, MRANDOM(5, 10) do
+			MagicBlock(FIREPILLARCOLORS[MRANDOM(1, #FIREPILLARCOLORS)], "Neon", FirePillarRefpart2.CFrame * ANGLES(RAD(MRANDOM(-60, 60)), 0, RAD(MRANDOM(-60, 60))), CF(0, MRANDOM(5, 7) / 10 * Player_Size, 0), VT(0, 0, 0), 30, 30, 30, 0, 0, 0, MRANDOM(3, 5) / 100)
+		end
+		for i = 1, MRANDOM(15, 20) do
+			local FIREEFFECTSIZE = MRANDOM(1, 2)
+			MagicBlock(FIREPILLARCOLORS[MRANDOM(1, #FIREPILLARCOLORS)], "Neon", FirePillarRefpart2.CFrame, CF(0, MRANDOM(5, 10) / 100, 0) * ANGLES(0, RAD(MRANDOM(-20, 20)), 0), VT(MRANDOM(SIZE / 6, SIZE / 4), 0, 0), FIREEFFECTSIZE, FIREEFFECTSIZE, FIREEFFECTSIZE, -0.02, -0.02, -0.02, MRANDOM(1, 2) / 100)
+		end
+		MagicCylinder("Really black", "Neon", CF(FIREPILLAR2POS), ANGLES(0, 0, 0), VT(0, 0, 0), SIZE, 0.1, SIZE, 1.5, 0, 1.5, LASTINGTIME)
+		MagicSphere("Really black", "Neon", FirePillarRefpart2.CFrame, ANGLES(0, 0, 0), VT(0, 0, 0), SIZE, 0.1, SIZE, 1.5, RISE, 1.5, LASTINGTIME)
+		MagicSphere("Black", "Neon", FirePillarRefpart2.CFrame, ANGLES(0, 0, 0), VT(0, 0, 0), SIZE * 0.5, 0.1, SIZE * 0.5, 1.5, RISE * 0.75, 1.5, LASTINGTIME)
+		MagicSphere("Dark indigo", "Neon", FirePillarRefpart2.CFrame, ANGLES(0, 0, 0), VT(0, 0, 0), SIZE * 0.25, 0.1, SIZE * 0.25, 1.5, RISE * 0.375, 1.5, LASTINGTIME)
+		MagnitudeDamage("", "", "", "", 10, 10, 10, 1, FirePillarRefpart2, SIZE / 3, false, LOWDAMAGE, HIGHDAMAGE, 0, "Normal", RootPart, 0, 1, MRANDOM(10, 15), nil, false, true, "Movement", -0.1, 3, true)
+	end
+end
+
+
+
+
+
+mouse.KeyDown:connect(function(key)
+  if key == "b" then
+    hum.WalkSpeed = 0
+    if Debounces.CanAttack == true then
+      Debounces.CanAttack = false
+      Debounces.NoIdl = true
+      Debounces.on = true
+      v = Instance.new("Sound")
+      v.SoundId = "http://www.roblox.com/asset/?id=800952230"
+      v.Parent = char
+      v.Looped = false
+      v.Pitch = 1
+      v.Volume =  3000
+      
+wait()
+        larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.5, 0) * CFrame.Angles(math.rad(75), 0, math.rad(30)), 0.1)
+        rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5, 0) * CFrame.Angles(math.rad(75), 0, math.rad(-30)), 0.1)
+        hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, 0) * CFrame.Angles(math.rad(-20), math.rad(0), 0), 0.1)
+        torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-30), math.rad(0), 0), 0.1)
+        lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(30), 0, math.rad(-5)), 0.1)
+        rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(30), 0, math.rad(5)), 0.1)
+        if Debounces.on == false then
+        end
+        wait()
+      end
+      wait()
+          
+		      v:Play()
+
+      for i = 1, 15 do
+        larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(-130)), 0.2)
+        rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(70)), 0.2)
+        hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, 0.2) * CFrame.Angles(math.rad(45), math.rad(30), 0), 0.1)
+        torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(30), math.rad(20), math.rad(0)), 0.2)
+        lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(-40)), 0.1)
+        rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(0)), 0.1)
+        if Debounces.on == false then
+          break
+        end
+        wait()
+      end
+      for i = 1, 15 do
+        larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(-70)), 0.2)
+        rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(130)), 0.2)
+        hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, 0.2) * CFrame.Angles(math.rad(45), math.rad(-30), 0), 0.1)
+        torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(30), math.rad(-20), math.rad(0)), 0.2)
+        lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(0)), 0.1)
+        rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(40)), 0.1)
+        if Debounces.on == false then
+          break
+        end
+        wait()
+      end
+      for i = 1, 15 do
+        larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(-130)), 0.2)
+        rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(70)), 0.2)
+        hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, 0.2) * CFrame.Angles(math.rad(45), math.rad(30), 0), 0.1)
+        torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(30), math.rad(20), math.rad(0)), 0.2)
+        lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(-40)), 0.1)
+        rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(0)), 0.1)
+        if Debounces.on == false then
+          break
+        end
+        wait()
+      end
+      for i = 1, 15 do
+        larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(-70)), 0.2)
+        rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(130)), 0.2)
+        hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, 0.2) * CFrame.Angles(math.rad(45), math.rad(-30), 0), 0.1)
+        torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(30), math.rad(-20), math.rad(0)), 0.2)
+        lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(0)), 0.1)
+        rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(40)), 0.1)
+        if Debounces.on == false then
+          break
+        end
+        wait()
+      end
+      for i = 1, 15 do
+        larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(-130)), 0.2)
+        rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(70)), 0.2)
+        hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, 0.2) * CFrame.Angles(math.rad(45), math.rad(30), 0), 0.1)
+        torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(30), math.rad(20), math.rad(0)), 0.2)
+        lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(-40)), 0.1)
+        rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(0)), 0.1)
+        if Debounces.on == false then
+          break
+        end
+        wait()
+      end
+      for i = 1, 10 do
+        larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(-70)), 0.2)
+        rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5, 0) * CFrame.Angles(math.rad(120), math.rad(0), math.rad(130)), 0.2)
+        hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, 0.2) * CFrame.Angles(math.rad(45), math.rad(-30), 0), 0.1)
+        torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(30), math.rad(-20), math.rad(0)), 0.2)
+        lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(0)), 0.1)
+        rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-30), 0, math.rad(40)), 0.1)
+        if Debounces.on == false then
+          break
+        end
+        wait()
+      end
+
+      wait(1.4)
+      Debounces.NoIdl = false
+      hum.WalkSpeed = 5
+      Debounces.on = false
+      wait()
+      if Debounces.CanAttack == false then
+        Debounces.CanAttack = true
+        v:Destroy()
+       
+      end
+    end
+  end)
+
+
+
+
+
+
+
+
+function Ragdoll(Format, Character, Force)
+  if Force ~= true then
+    if Character:FindFirstChild("Ragdoll") ~= nil and Format == true then
+      return false
+    end
+    if Character:FindFirstChild("Ragdoll") == nil and Format == false then
+      return false
+    end
+  end
+  local Head, Torso, Humanoid
+  local Dead = false
+  for _, Children in pairs(Character:GetChildren()) do
+    if Children.ClassName == "ForceField" then
+      Children:Remove()
+    end
+    if Children.Name == "" then
+      Children:Remove()
+    end
+    if Children.Name == "Head" then
+      Head = Children
+    end
+    if Children.Name == "Torso" then
+      Torso = Children
+    end
+    if Children.ClassName == "Humanoid" then
+      Humanoid = Children
+    end
+    if Children:IsA("Accoutrement") then
+      if Children:FindFirstChild("Handle") ~= nil then
+        if math.random(1, 3) == 1 then
+          coroutine.wrap(function()
+            Children.Parent = Workspace
+            wait()
+            Children.Parent = Character
+            Children.Handle.CanCollide = true
+          end)()
+        else
+          Children.Parent = Workspace
+          Children.Handle.CanCollide = true
+        end
+      else
+        Children:Remove()
+      end
+    end
+  end
+  if Humanoid ~= nil and Humanoid.Health <= 0 then
+    Dead = true
+  end
+  if Torso ~= nil then
+    for _, Children2 in pairs(Torso:GetChildren()) do
+      if Children2:IsA("JointInstance") then
+        Children2:Remove()
+      end
+    end
+  end
+  if Head ~= nil then
+    if (function()
+      if Dead == true and math.random(1, 2) == 1 then
+        return true
+      else
+        return false
+      end
+    end)() == false then
+      local Neck = Instance.new("Motor6D")
+      Neck.Name = "Neck"
+      Neck.Part0 = Torso
+      Neck.Part1 = Head
+      Neck.C0 = CFrame.new(0, 1, 0) * CFrame.fromEulerAnglesXYZ(math.rad(-90), 0, math.rad(180))
+      Neck.C1 = CFrame.new(0, -0.5, 0) * CFrame.fromEulerAnglesXYZ(math.rad(-90), 0, math.rad(180))
+      Neck.MaxVelocity = 0.1
+      Neck.Parent = Torso
+    end
+  end
+  if Format == true then
+    local Ragdoll = Instance.new("IntValue")
+    Ragdoll.Name = "Ragdoll"
+    Ragdoll.Parent = Character
+    if Torso ~= nil then
+      Torso.Velocity = Torso.Velocity / 1.25
+      Torso.RotVelocity = Torso.RotVelocity / 1.25 + Head.CFrame.lookVector * 80
+      if Dead == true and Humanoid ~= nil then
+        local Humanoid2 = Humanoid:Clone()
+        wait()
+        Humanoid:Remove()
+        Humanoid2.Parent = Character
+        Humanoid = Humanoid2
+      end
+      local Limb = Character:FindFirstChild("Right Arm")
+      if Limb ~= nil then
+        Limb.Velocity = Torso.Velocity
+        Limb.CFrame = Torso.CFrame * CFrame.new(1.5, 0, 0)
+        local Joint = Instance.new("Glue")
+        Joint.Name = "RightShoulder"
+        Joint.Part0 = Torso
+        Joint.Part1 = Limb
+        Joint.C0 = CFrame.new(1.5, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0)
+        Joint.C1 = CFrame.new(0, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0)
+        Joint.Parent = Torso
+        local Weight = Instance.new("Part")
+        Weight.Name = ""
+        Weight.TopSurface = 0
+        Weight.BottomSurface = 0
+        Weight.Shape = "Block"
+        Weight.FormFactor = "Custom"
+        Weight.Size = Vector3.new(1, 1, 1)
+        Weight.Transparency = 1
+        Weight.CFrame = Limb.CFrame * CFrame.new(0, -0.5, 0)
+        Weight.Parent = Character
+        local Weld = Instance.new("Weld")
+        Weld.Part0 = Limb
+        Weld.Part1 = Weight
+        Weld.C0 = CFrame.new(0, -0.5, 0)
+        Weld.Parent = Limb
+      end
+      local Limb = Character:FindFirstChild("Left Arm")
+      if Limb then
+        Limb.Velocity = Torso.Velocity
+        Limb.CFrame = Torso.CFrame * CFrame.new(-1.5, 0, 0)
+        local Joint = Instance.new("Glue")
+        Joint.Name = "LeftShoulder"
+        Joint.Part0 = Torso
+        Joint.Part1 = Limb
+        Joint.C0 = CFrame.new(-1.5, 0.5, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0)
+        Joint.C1 = CFrame.new(0, 0.5, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0)
+        Joint.Parent = Torso
+        local Weight = Instance.new("Part")
+        Weight.Name = ""
+        Weight.TopSurface = 0
+        Weight.BottomSurface = 0
+        Weight.Shape = "Block"
+        Weight.FormFactor = "Custom"
+        Weight.Size = Vector3.new(1, 1, 1)
+        Weight.Transparency = 1
+        Weight.CFrame = Limb.CFrame * CFrame.new(0, -0.5, 0)
+        Weight.Parent = Character
+        local Weld = Instance.new("Weld")
+        Weld.Part0 = Limb
+        Weld.Part1 = Weight
+        Weld.C0 = CFrame.new(0, -0.5, 0)
+        Weld.Parent = Limb
+      end
+      local Limb = Character:FindFirstChild("Right Leg")
+      if Limb then
+        Limb.Velocity = Torso.Velocity
+        Limb.CFrame = Torso.CFrame * CFrame.new(0.5, -2, 0)
+        local Joint = Instance.new("Glue")
+        Joint.Name = "RightHip"
+        Joint.Part0 = Torso
+        Joint.Part1 = Limb
+        Joint.C0 = CFrame.new(0.5, -1, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0)
+        Joint.C1 = CFrame.new(0, 1, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0)
+        Joint.Parent = Torso
+        local Weight = Instance.new("Part")
+        Weight.Name = ""
+        Weight.TopSurface = 0
+        Weight.BottomSurface = 0
+        Weight.Shape = "Block"
+        Weight.FormFactor = "Custom"
+        Weight.Size = Vector3.new(1, 1, 1)
+        Weight.Transparency = 1
+        Weight.CFrame = Limb.CFrame * CFrame.new(0, -0.5, 0)
+        Weight.Parent = Character
+        local Weld = Instance.new("Weld")
+        Weld.Part0 = Limb
+        Weld.Part1 = Weight
+        Weld.C0 = CFrame.new(0, -0.5, 0)
+        Weld.Parent = Limb
+      end
+      local Limb = Character:FindFirstChild("Left Leg")
+      if Limb then
+        Limb.Velocity = Torso.Velocity
+        Limb.CFrame = Torso.CFrame * CFrame.new(-0.5, -2, 0)
+        local Joint = Instance.new("Glue")
+        Joint.Name = "LeftHip"
+        Joint.Part0 = Torso
+        Joint.Part1 = Limb
+        Joint.C0 = CFrame.new(-0.5, -1, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0)
+        Joint.C1 = CFrame.new(0, 1, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0)
+        Joint.Parent = Torso
+        local Weight = Instance.new("Part")
+        Weight.Name = ""
+        Weight.TopSurface = 0
+        Weight.BottomSurface = 0
+        Weight.Shape = "Block"
+        Weight.FormFactor = "Custom"
+        Weight.Size = Vector3.new(1, 1, 1)
+        Weight.Transparency = 1
+        Weight.CFrame = Limb.CFrame * CFrame.new(0, -0.5, 0)
+        Weight.Parent = Character
+        local Weld = Instance.new("Weld")
+        Weld.Part0 = Limb
+        Weld.Part1 = Weight
+        Weld.C0 = CFrame.new(0, -0.5, 0)
+        Weld.Parent = Limb
+      end
+      local Weight = Instance.new("Part")
+      Weight.Name = ""
+      Weight.TopSurface = 0
+      Weight.BottomSurface = 0
+      Weight.Shape = "Block"
+      Weight.FormFactor = "Custom"
+      Weight.Size = Vector3.new(1.75, 1.5, 1.1)
+      Weight.Transparency = 1
+      Weight.CFrame = Torso.CFrame * CFrame.new(0, 0.5, 0)
+      Weight.Parent = Character
+      local Weld = Instance.new("Weld")
+      Weld.Part0 = Torso
+      Weld.Part1 = Weight
+      Weld.C0 = CFrame.new(0, 0.5, 0)
+      Weld.Parent = Torso
+    end
+  elseif Format == false then
+    if Character:FindFirstChild("Ragdoll") ~= nil then
+      Character.Ragdoll:Remove()
+    end
+    if Torso ~= nil then
+      local Limb = Character:FindFirstChild("Right Arm")
+      if Limb ~= nil then
+        local Joint = Instance.new("Motor6D")
+        Joint.Name = "Right Shoulder"
+        Joint.Part0 = Torso
+        Joint.Part1 = Limb
+        Joint.C0 = CFrame.new(1.5, 0.5, 0) * CFrame.fromEulerAnglesXYZ(0, math.rad(90), 0)
+        Joint.C1 = CFrame.new(0, 0.5, 0) * CFrame.fromEulerAnglesXYZ(0, math.rad(90), 0)
+        Joint.MaxVelocity = 0.15
+        Joint.Parent = Torso
+      end
+      local Limb = Character:FindFirstChild("Left Arm")
+      if Limb ~= nil then
+        local Joint = Instance.new("Motor6D")
+        Joint.Name = "Left Shoulder"
+        Joint.Part0 = Torso
+        Joint.Part1 = Limb
+        Joint.C0 = CFrame.new(-1.5, 0.5, 0) * CFrame.fromEulerAnglesXYZ(0, math.rad(-90), 0)
+        Joint.C1 = CFrame.new(0, 0.5, 0) * CFrame.fromEulerAnglesXYZ(0, math.rad(-90), 0)
+        Joint.MaxVelocity = 0.15
+        Joint.Parent = Torso
+      end
+      local Limb = Character:FindFirstChild("Right Leg")
+      if Limb ~= nil then
+        local Joint = Instance.new("Motor6D")
+        Joint.Name = "Right Hip"
+        Joint.Part0 = Torso
+        Joint.Part1 = Limb
+        Joint.C0 = CFrame.new(0.5, -1, 0) * CFrame.fromEulerAnglesXYZ(0, math.rad(90), 0)
+        Joint.C1 = CFrame.new(0, 1, 0) * CFrame.fromEulerAnglesXYZ(0, math.rad(90), 0)
+        Joint.MaxVelocity = 0.1
+        Joint.Parent = Torso
+      end
+      local Limb = Character:FindFirstChild("Left Leg")
+      if Limb ~= nil then
+        local Joint = Instance.new("Motor6D")
+        Joint.Name = "Left Hip"
+        Joint.Part0 = Torso
+        Joint.Part1 = Limb
+        Joint.C0 = CFrame.new(-0.5, -1, 0) * CFrame.fromEulerAnglesXYZ(0, math.rad(-90), 0)
+        Joint.C1 = CFrame.new(0, 1, 0) * CFrame.fromEulerAnglesXYZ(0, math.rad(-90), 0)
+        Joint.MaxVelocity = 0.1
+        Joint.Parent = Torso
+      end
+      local Animate = Character:FindFirstChild("Animate")
+      if Animate ~= nil then
+        local Animate2 = Animate:Clone()
+        Animate:Remove()
+        Animate2.Parent = Character
+      end
+    end
+  else
+    return false
+  end
+  return true, Format
+end
+
+
+
+
+
+function weld5(part0, part1, c0, c1)
+    weeld=Instance.new("Weld", part0)
+    weeld.Part0=part0
+    weeld.Part1=part1
+    weeld.C0=c0
+    weeld.C1=c1
+    return weeld
+end
+
+
+
+
+
+Grab = false
+mouse.KeyDown:connect(function(key)
+    if key == "z" then
+        Debounces.on = true
+        Debounces.NoIdl = true
+		Debounces.ks = true
+        if Grab == false then
+        gp = nil
+        for i = 1, 20 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(math.rad(-20),math.rad(0),math.rad(20)), 0.2)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,0.65,0)*CFrame.Angles(math.rad(80),math.rad(0),math.rad(-80)), 0.2)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(-10),math.rad(-70),0), 0.2)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0, math.rad(70), 0), 0.2)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(-10), math.rad(30), math.rad(-20)), 0.2)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(10), math.rad(-15), math.rad(20)), 0.2)
+            if Debounces.on == false then break end
+            rs:wait(2)
+        end
+
+        for i = 1, 20 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(math.rad(-20),math.rad(0),math.rad(20)), 0.2)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,0.65,0)*CFrame.Angles(math.rad(70),math.rad(0),math.rad(20)), 0.2)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(-10),math.rad(30),0), 0.2)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0, math.rad(-30), 0), 0.2)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(10), math.rad(30), math.rad(-20)), 0.2)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-10), math.rad(-15), math.rad(20)), 0.2)
+            if Debounces.on == false then break end
+            rs:wait(2)
+        end
+    con1:disconnect()
+    Debounces.on = false
+    Debounces.NoIdl = false
+    elseif Grab == true then
+        Grab = false
+			--[[for i = 1, 16 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(math.rad(0),math.rad(50),math.rad(60)), 0.3)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,0.65,-.5)*CFrame.Angles(math.rad(130),math.rad(0),math.rad(-60)), 0.3)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(14),math.rad(70),0), 0.3)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0, math.rad(-70), 0), 0.3)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(10), math.rad(30), math.rad(-20)), 0.3)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-10), math.rad(-15), math.rad(20)), 0.3)
+			cor.Weld.C1 = Lerp(cor.Weld.C1, CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(40), 0), 0.3)
+			if Debounces.on == false then end
+			rs:wait()
+		end]]--
+			for i = 1, 16 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(math.rad(-20),math.rad(0),math.rad(20)), 0.3)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,0.65,0)*CFrame.Angles(math.rad(140),math.rad(0),math.rad(-73)), 0.3)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(20),math.rad(-60),0), 0.3)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0, math.rad(50), 0), 0.3)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(0), math.rad(30), math.rad(-20)), 0.3)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-10), math.rad(-15), math.rad(20)), 0.3)
+			if Debounces.on == false then end
+			rs:wait()
+		end
+       Grabee = gp:FindFirstChild("Torso")
+		par,loc=workspace:FindPartOnRay(Ray.new(Character.Torso.Position,(Character.Torso.Position-(Character.Torso.Position-Vector3.new(0,2,0))).unit*-500),Character)
+			for i=1, 30 do
+			p=Instance.new("Part")
+			p.FrontSurface=par.TopSurface
+			p.Material=par.Material
+			p.BottomSurface=0
+			p.Anchored=true p.CanCollide=false
+			p.BrickColor=par.BrickColor
+			p.Size=Vector3.new(math.random(15,35)/5,math.random(15,35)/5,math.random(4,5))
+			p.CFrame=CFrame.new(Grabee.Position-Vector3.new(math.random(-i,i)/1,3,math.random(-i,i)/1),loc+Vector3.new(0,1000-i*20,0))*CFrame.fromEulerAnglesXYZ(math.random(-10,10)/30,math.random(-10,10)/30,math.random(-10,10)/30)
+			p.Parent=Character
+			game:GetService("Debris"):AddItem(p,2+i*.1)
+			if math.random(1,5)==5 then
+				coroutine.resume(coroutine.create(function(p) f=Instance.new("Smoke") f.Parent=p f.Size=30 f.RiseVelocity=0 f.Opacity=.025 Swait(.1) f.Enabled=false Swait(1) f:Remove() end),p)
+			end
+		end
+		for i=1, 30 do
+			for i=1, 1 do
+			p=Instance.new("Part")
+			p.TopSurface=par.TopSurface
+			p.BottomSurface=par.BottomSurface
+			p.Material=par.Material
+			p.BottomSurface=0
+			p.Anchored=false p.CanCollide=true
+			p.BrickColor=par.BrickColor
+			p.formFactor="Custom"
+			p.Size=Vector3.new(math.random(15,35)/12,math.random(13,35)/12,math.random(15,35)/12)
+			p.CFrame=CFrame.new(Grabee.Position-Vector3.new(math.random(-4,4),-2,math.random(-4,4)))*CFrame.fromEulerAnglesXYZ(math.random(-10,10)/20,math.random(-10,10)/5,math.random(-10,10)/20)
+			p.Parent=Character
+			game:GetService("Debris"):AddItem(p,3+i*.1)
+			p.Velocity=Vector3.new(math.random(-10,10)*4,math.random(40,80),math.random(-10,10)*4)
+			p.RotVelocity=p.Velocity
+			if math.random(1,5)==5 then
+				coroutine.resume(coroutine.create(function(p) f=Instance.new("Smoke") f.Parent=p f.Size=15 f.RiseVelocity=10 f.Opacity=.1 Swait(.1) f.Enabled=false Swait(1) f:Remove() end),p)
+			end
+			end
+			Swait(.025)
+		end	
+		        
+		for i = 1, 13 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(math.rad(-20),math.rad(0),math.rad(20)), 0.3)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,0.65,-.4)*CFrame.Angles(math.rad(70),math.rad(0),math.rad(-13)), 0.3)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(0),math.rad(20),0), 0.3)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-60), math.rad(-30), 0), 0.3)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(80), math.rad(30), math.rad(-20)), 0.3)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(70), math.rad(-15), math.rad(20)), 0.3)
+			if Debounces.on == false then end
+			rs:wait()
+		end
+		wait(0.3)
+		hum1:TakeDamage(math.random(10000020,10000030))
+		if gp ~= nil then
+			for i,v in pairs(larm:GetChildren()) do
+				if v.Name == "asd" and v:IsA("Weld") then
+					v:Remove()
+				end
+			end
+		wait(0.3)
+		stanceToggle = "Idle1"
+		
+
+        --[[bv = Instance.new("BodyVelocity",gp:FindFirstChild("Torso"))
+        bv.maxForce = Vector3.new(400000, 400000, 400000)
+        bv.P = 125000
+        bv.velocity = char.Head.CFrame.lookVector * 200]]--
+        ht=nil
+        Debounces.on = false
+        Debounces.NoIdl = false
+        elseif ht == nil then wait()
+        Grab = false
+        Debounces.on = false
+        Debounces.NoIdl = false
+            end
+        end
+    end
+end)
+
+
+
+
+
+
+mouse.KeyDown:connect(function(key)
+	if key == "q" then
+		Character.Humanoid.WalkSpeed = 0
+		Debounces.on = true
+        Debounces.NoIdl = true
+		Debounces.ks = true
+		for i = 1, 20 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(2.5,0,1.3), 0.2)
+			rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(0,0,0), 0.5)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0,-1,0),0.2)
+			torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0,-1,0)*CFrame.Angles(0,0,0), 0.5)
+			if Debounces.on == false then break end
+            rs:wait()
+		    end
+		local HitBox = Instance.new("Part",Character["Right Arm"])
+		HitBox.Size = Vector3.new(3,3,3)
+		HitBox.Transparency = 1
+		HitBox.CanCollide = false
+		local HitBox2 = Instance.new("Weld",HitBox)
+		HitBox2.Part0 = Character["Right Arm"]
+		HitBox2.Part1 = HitBox
+		HitBox2.C0 = CFrame.new(0,-1.1,0)
+		HitBox.Touched:connect(function(hit)
+			if hit.Parent:FindFirstChild("Humanoid") and hit.Parent ~= nil then
+				HitBox:remove()
+				hit.Parent.Head.Transparency = 1e9
+				local SFXZ = Instance.new("Sound",hit.Parent.Torso)
+			SFXZ.SoundId = "rbxassetid://206082273"
+			SFXZ.Volume = 1
+			SFXZ.Pitch = 1
+			SFXZ.Looped = false
+			wait(0.01)
+			SFXZ:Play()
+		local HitBox = Instance.new("Part",Character["Right Arm"])
+		HitBox.Transparency = 0
+		HitBox.Size = Vector3.new(1,1,1)
+		HitBox.BrickColor = hit.Parent.Head.BrickColor
+		HitBox.CanCollide = false
+		local HitBoxM = Instance.new("SpecialMesh",HitBox)
+		HitBoxM.MeshType = "Head"
+		HitBoxM.Scale = Vector3.new(1.25,1.25,1.25)
+		local HitBox2 = Instance.new("Weld",HitBox)
+		HitBox2.Part0 = Character["Right Arm"]
+		HitBox2.Part1 = HitBox
+		HitBox2.C0 = CFrame.new(0,-1.1,0)
+		local D = Instance.new("Decal",HitBox)
+		D.Face = "Front"
+		D.Texture = hit.Parent.Head.face.Texture
+		hit.Parent.Head.face:remove()
+		local partasdeff = Instance.new("ParticleEmitter",hit.Parent.Torso)
+			partasdeff.Color = ColorSequence.new(Color3.new(1, 0, 0), Color3.new(.5, 0, 0))
+			partasdeff.LightEmission = .1
+			partasdeff.Size = NumberSequence.new(0.2)
+			partasdeff.Texture = "http://www.roblox.com/asset/?ID=771221224"
+			aaa = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.2),NumberSequenceKeypoint.new(1, 5)})
+			bbb = NumberSequence.new({NumberSequenceKeypoint.new(0, 1),NumberSequenceKeypoint.new(0.0636, 0), NumberSequenceKeypoint.new(1, 1)})
+			partasdeff.Transparency = bbb
+			partasdeff.Size = aaa
+			partasdeff.ZOffset = .9
+			partasdeff.Acceleration = Vector3.new(0, -5, 0)
+			partasdeff.LockedToPart = false
+			partasdeff.EmissionDirection = "Top"
+			partasdeff.Lifetime = NumberRange.new(1, 2)
+			partasdeff.Rate = 1000
+			partasdeff.Rotation = NumberRange.new(-100, 100)
+			partasdeff.RotSpeed = NumberRange.new(-100, 100)
+			partasdeff.Speed = NumberRange.new(10)
+			partasdeff.VelocitySpread = 20
+			partasdeff.Enabled=true
+			hit.Parent.Head:remove()
+			wait(1)
+			for i = 1,14 do
+				HitBoxM.Scale = HitBoxM.Scale - Vector3.new(0.1,0.1,0.1)
+				game:GetService("RunService").RenderStepped:wait()
+			end
+			HitBox:remove()
+			wait(0.5)
+			partasdeff.Enabled = false
+			HitBox:remove()
+			Debounces.on = false
+        Debounces.NoIdl = false
+		Debounces.ks = false
+		Character.Humanoid.WalkSpeed = 16
+		local a = Instance.new("Part",game.Players.LocalPlayer.Character.Head)
+a.Transparency = 1
+a.Size = Vector3.new(.2,.2,.2)
+local b = Instance.new("Weld",a.Parent.Parent)
+b.Part0 = a
+b.Part1 = a.Parent
+b.C0 = CFrame.new(0,.3,0.65)
+local p2mit = Instance.new("ParticleEmitter",a)
+p2mit.Texture = "http://www.roblox.com/asset/?id=243132757"
+p2mit.Color = ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.new(.6,0,0)),ColorSequenceKeypoint.new(1,Color3.new(.6,0,0))})
+p2mit.Size = NumberSequence.new({NumberSequenceKeypoint.new(0,.2),NumberSequenceKeypoint.new(1,.2)})
+p2mit.Lifetime = NumberRange.new(1)
+p2mit.Rate = 10
+p2mit.VelocitySpread = 10
+p2mit.Acceleration = Vector3.new(0,-10,0)
+p2mit.Speed = NumberRange.new(0)
+coroutine.wrap(function()
+    wait(15)
+    p2mit.Enabled=false
+    game:service'Debris':AddItem(a,2)
+end)()
+			end
+		end)
+		for i = 1, 20 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(2.9,0,0), 0.2)
+			rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(0,0,0), 0.5)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0,1,0),0.2)
+			torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0,-1,0)*CFrame.Angles(0,0,0), 0.5)
+			if Debounces.on == false then break end
+            fat.Event:wait()
+		    end
+		wait(0.5)
+		HitBox:remove()
+		wait(3)
+		Debounces.on = false
+        Debounces.NoIdl = false
+		Debounces.ks = false
+		Character.Humanoid.WalkSpeed = 5
+	end
+end)
+
+Humanoid.WalkSpeed = 5
+
+function FindNearestTorso(Position,Distance,SinglePlayer)
+    if SinglePlayer then return(SinglePlayer.Torso.CFrame.p -Position).magnitude < Distance end
+        local List = {}
+        for i,v in pairs(workspace:GetChildren())do
+            if v:IsA("Model")then
+                if v:findFirstChild("Torso")then
+                    if v ~= char then
+                        if(v.Torso.Position -Position).magnitude <= Distance then
+                            table.insert(List,v)
+                        end
+                    end
+                end
+            end
+        end
+    return List
+end
+
+
+
+
+
+local HandCF = CFrame.new(root.Position - Vector3.new(0,3,0)) * CFrame.Angles(math.rad(90), math.rad(0), math.rad(0))
+        local valuer = 5
+        local valuer2 = 10
+        local valuer3 = 15
+
+	
+mouse.KeyDown:connect(function(key)
+	if key == "f" then
+		 if Debounces.CanAttack == true then
+			Debounces.CanAttack = false
+			Debounces.NoIdl = true
+			Debounces.on = true
+			
+			
+			local en = Instance.new("Part",hed)
+			en.Material = "Neon"
+			en.BrickColor = BrickColor.new("Deep orange")
+			en.CanCollide = false
+			en.Size = Vector3.new(.1,.1,.1)
+			en.Shape = "Ball"
+			en.TopSurface = "SmoothNoOutlines"
+	        en.BottomSurface = "SmoothNoOutlines"
+	
+	        for i = 1,200 do
+		en.Size = en.Size + Vector3.new(.01,.01,.01)
+		en.CFrame = hed.CFrame * CFrame.new(0,1.35,-0.86)
+		if Debounces.on == false then break end
+		rs:wait()
+	end
+	
+	en:Destroy()
+	wait(0.1)
+	local X = Instance.new("Part",char)
+	X.BrickColor = BrickColor.new("Deep orange")
+	X.Name = "Shell"
+	X.Shape = "Ball"
+	X.Material = "Neon"
+	X.Size = Vector3.new(1,1,1)
+	X.CFrame = hed.CFrame * CFrame.new(0,1.35,-1.66)
+	local bv = Instance.new("BodyVelocity",X)
+	bv.maxForce = Vector3.new(99999,99999,99999)
+	X.CFrame = CFrame.new(X.Position,mouse.Hit.p)
+	bv.velocity = X.CFrame.lookVector*65
+	
+	 Explode = X.Touched:connect(function(hit)
+		if hit ~= char and hit.Name ~= "Shell" then
+			local cf = X.CFrame
+			bv:Destroy()
+			X.Anchored = true
+			Explode:disconnect()
+			X.Size = Vector3.new(3,3,3)
+			X.Touched:connect(function(hit) end)
+			X.CanCollide = false
+			X.Transparency = 1
+		
+		local part3 = Instance.new("Part", rarm)
+			part3.Anchored=true
+			part3.CanCollide=false
+			part3.Locked = true
+			part3.TopSurface = "SmoothNoOutlines"
+			part3.BottomSurface = "SmoothNoOutlines"
+			part3.FormFactor='Custom'
+			part3.Size=Vector3.new(2,2, 2)
+			part3.CFrame=X.CFrame
+			part3.Transparency=0
+			part3.BrickColor=BrickColor.new("Deep orange")
+			local mesh3 = Instance.new("SpecialMesh",part3)
+			mesh3.MeshType = "Sphere"
+			mesh3.Scale = Vector3.new(2,2,2)
+			--debris:AddItem(X,8)
+			local part4 = Instance.new("Part", rarm)
+			part4.Material = "Neon"
+			part4.Anchored=true
+			part4.CanCollide=false
+			part4.Locked = true
+			part4.TopSurface = "SmoothNoOutlines"
+			part4.BottomSurface = "SmoothNoOutlines"
+			part4.FormFactor='Custom'
+			part4.Size=Vector3.new(2,2, 2)
+			part4.CFrame=X.CFrame
+			part4.Transparency=0
+			part4.BrickColor=BrickColor.new("Really black")
+			local mesh4 = Instance.new("SpecialMesh",part4)
+			mesh4.MeshType = "Sphere"
+			mesh4.Scale = Vector3.new(1,1,1)
+			local part7 = Instance.new("Part", rarm)
+			part7.Material = "Neon"
+			part7.Anchored=true
+			part7.CanCollide=false
+			part7.Locked = true
+			part7.TopSurface = "SmoothNoOutlines"
+			part7.BottomSurface = "SmoothNoOutlines"
+			part7.FormFactor='Custom'
+			part7.Size=Vector3.new(2,2, 2)
+			part7.CFrame=X.CFrame
+			part7.Transparency=0
+			part7.BrickColor=BrickColor.new("Really black")
+			local mesh7 = Instance.new("SpecialMesh",part7)
+			mesh7.MeshType = "Sphere"
+			mesh7.Scale = Vector3.new(0.2, 0.2, 0.2)
+		--[[X.Touched:connect(function(ht)
+				hit = ht.Parent
+			if ht and hit:IsA("Model") then
+					if hit:FindFirstChild("Humanoid") then
+						if hit.Name ~= p.Name then
+							hit:FindFirstChild("Humanoid"):TakeDamage(math.random(4,6))
+							wait(.3)
+						end
+					end
+			elseif ht and hit:IsA("Hat") then
+				if hit.Parent.Name ~= p.Name then
+					if hit.Parent:FindFirstChild("Humanoid") then
+						hit.Parent:FindFirstChild("Humanoid"):TakeDamage(math.random(4,6))
+						wait(.3)
+					end
+				end
+			end
+		end)
+		part3.Touched:connect(function(ht)
+				hit = ht.Parent
+			if ht and hit:IsA("Model") then
+					if hit:FindFirstChild("Humanoid") then
+						if hit.Name ~= p.Name then
+							hit:FindFirstChild("Humanoid"):TakeDamage(math.random(4,6))
+							wait(.3)
+						end
+					end
+			elseif ht and hit:IsA("Hat") then
+				if hit.Parent.Name ~= p.Name then
+					if hit.Parent:FindFirstChild("Humanoid") then
+						hit.Parent:FindFirstChild("Humanoid"):TakeDamage(math.random(4,6))
+						wait(.3)
+					end
+				end
+			end
+		end)]]--
+		 for i,v in pairs(FindNearestTorso(X.CFrame.p,50000))do
+        if v:FindFirstChild('Humanoid') then
+            v.Humanoid:TakeDamage(math.random(10000020,10000030))
+            v.Humanoid.PlatformStand = true
+            v:FindFirstChild("Torso").Velocity = head.CFrame.lookVector * 200
+        end
+    end 
+
+		local acos = math.acos
+		local sqrt = math.sqrt
+		local Vec3 = Vector3.new
+		local fromAxisAngle = CFrame.fromAxisAngle
+
+		local function toAxisAngle(CFr)
+			local X,Y,Z,R00,R01,R02,R10,R11,R12,R20,R21,R22 = CFr:components()
+			local Angle = math.acos((R00+R11+R22-1)/2)
+			local A = (R21-R12)^2+(R02-R20)^2+(R10-R01)^2
+			A = A == 0 and 0.00001 or A
+			local B = (R21-R12)^2+(R02-R20)^2+(R10-R01)^2
+			B = B == 0 and 0.00001 or B
+			local C = (R21-R12)^2+(R02-R20)^2+(R10-R01)^2
+			C = C == 0 and 0.00001 or C
+			local x = (R21-R12)/sqrt(A)
+			local y = (R02-R20)/sqrt(B)
+			local z = (R10-R01)/sqrt(C)
+			return Vec3(x,y,z),Angle
+		end
+
+		function ApplyTrig(Num,Func)
+			local Min,Max = Func(0),Func(1)
+			local i = Func(Num)
+			return (i-Min)/(Max-Min)
+		end
+
+		function LerpCFrame(CFrame1,CFrame2,Num)
+			local Vec,Ang = toAxisAngle(CFrame1:inverse()*CFrame2)
+			return CFrame1*fromAxisAngle(Vec,Ang*Num) + (CFrame2.p-CFrame1.p)*Num
+		end
+
+		function Crater(Torso,Radius)
+			Spawn(function()
+				local Ray = Ray.new(Torso.Position,Vector3.new(0,-1,0)*10)
+				local Ignore = {}
+				for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+					if v.Character ~= nil then
+						Ignore[#Ignore+1] = v.Character
+					end
+				end
+				local Hit,Pos,SurfaceNorm = Workspace:FindPartOnRayWithIgnoreList(Ray,Ignore)
+				if Hit == nil then return end
+					local Parts = {}
+					for i = 1,360,10 do
+						local P = Instance.new("Part",Torso.Parent)
+						P.Anchored = true
+						P.FormFactor = "Custom"
+						P.BrickColor = Hit.BrickColor
+						P.Material = Hit.Material
+						P.TopSurface = "Smooth"
+						P.BottomSurface = "Smooth"
+						P.Size = Vector3.new(10,20,20)*(math.random(80,100)/100)
+						P.CFrame = ((CFrame.new(Pos,Pos+SurfaceNorm)*CFrame.Angles(math.rad(90),0,0))-Vector3.new(0,7,0))*CFrame.Angles(math.rad(math.random(-50,50)),math.rad(math.random(-50,50)),math.rad(math.random(-50,50)))
+						Parts[#Parts+1] = {P,P.CFrame,((CFrame.new(Pos,Pos+SurfaceNorm)*CFrame.Angles(math.rad(90),0,0))-Vector3.new(0,1,0))*CFrame.Angles(0,math.rad(i),0)*CFrame.new(0,0,-Radius)*CFrame.Angles(math.rad(math.random(-50,-20)),math.rad(math.random(-15,15)),math.rad(math.random(-15,15))),P.Size}
+						if math.random(0,5) == 0 then -- rubble
+							local P = Instance.new("Part",Torso.Parent)
+							P.Anchored = true
+							P.FormFactor = "Custom"
+							P.BrickColor = Hit.BrickColor
+							P.Material = Hit.Material
+							P.TopSurface = "Smooth"
+							P.BottomSurface = "Smooth"
+							P.Size = Vector3.new(4,4,4)*(math.random(80,100)/100)
+							P.CFrame = ((CFrame.new(Pos,Pos+SurfaceNorm)*CFrame.Angles(math.rad(90),0,0))-Vector3.new(0,2.5,0))*CFrame.Angles(math.rad(math.random(-50,50)),math.rad(math.random(-50,50)),math.rad(math.random(-50,50)))
+							Parts[#Parts+1] = {P,P.CFrame,(CFrame.new(Pos,Pos+SurfaceNorm)*CFrame.Angles(math.rad(90),0,0))*CFrame.Angles(0,math.rad(i),0)*CFrame.new(0,0,-Radius-8)*CFrame.Angles(math.rad(math.random(-90,90)),math.rad(math.random(-90,90)),math.rad(math.random(-90,90))),P.Size}
+							end
+						end
+						for i = 0,1,0.05 do
+							for i2,v in pairs(Parts) do
+								v[1].CFrame = LerpCFrame(v[2],v[3],ApplyTrig(i,math.cos))
+							end
+							wait(0.02)
+						end
+						for i,v in pairs(Parts) do
+							if v[1].Size.X > 2.1 then
+								v[1].CFrame = v[1].CFrame+Vector3.new(0,2,0)
+							end
+							v[1].Anchored = false
+						end
+						for i = 0,1,0.05 do
+							for i2,v in pairs(Parts) do
+								v[1].Transparency = i
+								if i == 1 then
+									v[1]:Destroy()
+								elseif i >= 0.25 then
+									v[1].CanCollide = false
+								end
+							end
+						wait(0.02)
+						end
+					Parts = nil
+					end)
+				end
+
+				
+				Part = function(x,y,z,color,tr,cc,an,parent)
+					local p = Instance.new('Part',parent or Weapon)
+					p.formFactor = 'Custom'
+					p.Size = Vector3.new(x,y,z)
+					p.BrickColor = BrickColor.new(color)
+					p.CanCollide = cc
+					p.Transparency = tr
+					p.Anchored = an
+					p.TopSurface,p.BottomSurface = 0,0
+					p.Locked=true
+					p:BreakJoints()
+				return p end
+
+			Mesh = function(par,num,x,y,z)
+			local msh = _
+			if num == 1 then msh = Instance.new("CylinderMesh",par)
+			elseif num == 2 then msh = Instance.new("SpecialMesh",par) msh.MeshType = 3
+			elseif num == 3 then msh = Instance.new("BlockMesh",par)
+			elseif num == 4 then msh = Instance.new("SpecialMesh",par) msh.MeshType = "Torso"
+			elseif type(num) == 'string' then msh = Instance.new("SpecialMesh",par) msh.MeshId = num
+			end msh.Scale = Vector3.new(x,y,z)
+			return msh end
+
+			function explosion(col1,col2,cfr,sz,rng,dmg)
+				local a= Part(1,1,1,col1,.5,false,true,workspace)
+				local a2= Part(1,1,1,col2,.5,false,true,workspace)
+				local a3= Part(1,1,1,col2,.5,false,true,workspace)
+				v1,v2,v3=sz.x,sz.y,sz.z
+				local m= Mesh(a,'http://www.roblox.com/asset/?id=1185246',v1,v2,v3)
+				local m2= Mesh(a2,3,v1/3,v2/3,v3/3)
+				local m3= Mesh(a3,3,v1/3,v2/3,v3/3)
+				a.CFrame=cfr
+				a2.CFrame=cfr*CFrame.Angles(math.random(),math.random(),math.random())
+				a3.CFrame=cfr*CFrame.Angles(math.random(),math.random(),math.random())
+
+				Spawn(function()
+					while wait() do
+						if a.Transparency >= 1 then a:Destroy() a2:Destroy() a3:Destroy() break end
+							m.Scale=m.Scale+Vector3.new(.1,0.1,0.1)
+							m2.Scale=m2.Scale+Vector3.new(.1,0.1,0.1)
+							m3.Scale=m3.Scale+Vector3.new(.1,0.1,0.1)
+							a.Transparency=a.Transparency+0.05
+							a2.Transparency=a2.Transparency+0.05
+							a3.Transparency=a3.Transparency+0.05
+						end
+					end)
+				end
+
+				Crater(X,120)
+				Crater(X,220)
+				Crater(X,320)
+				z = Instance.new("Sound",workspace)
+				z.SoundId = "rbxassetid://231917744"
+				z.Pitch = .5
+				z.Volume = 5
+				z1 = Instance.new("Sound",workspace)
+				z1.SoundId = "rbxassetid://231917744"
+				z1.Pitch = .5
+				z1.Volume = 5
+				z2 = Instance.new("Sound",workspace)
+				z2.SoundId = "rbxassetid://231917744"
+				z2.Pitch = .5
+				z2.Volume = 5
+				z3 = Instance.new("Sound",workspace)
+				z3.SoundId = "rbxassetid://245537790"
+				z3.Pitch = .7
+				z3.Volume = 5
+				z4 = Instance.new("Sound",workspace)
+				z4.SoundId = "rbxassetid://245537790"
+				z4.Pitch = .7
+				z4.Volume = 5
+                                z4a = Instance.new("Sound",workspace)
+                                z4a.SoundId = "rbxassetid://419447292"
+                                z4a.Pitch = 1
+                                z4a.Volume = 5
+                                z3a = Instance.new("Sound",workspace)
+                                z3a.SoundId = "rbxassetid://421328847"
+                                z3a.Pitch = 1
+                                z3a.Volume = 5
+                                wait(0.1)
+				z:Play()
+				z1:Play()
+				z2:Play()
+				z3:Play()
+				z4:Play()
+				z3a:Play()
+				z4a:Play()
+
+				local part=Instance.new('Part',rarm)
+				part.Anchored=true
+				part.CanCollide=false
+				part.Locked = true
+				part.FormFactor='Custom'
+				part.Size=Vector3.new(2,2,2)
+				part.CFrame=X.CFrame*CFrame.new(0,0,0)
+				part.Transparency=0
+				part.BrickColor=BrickColor.new('Really black')
+				local mesh=Instance.new('SpecialMesh',part)
+				mesh.MeshId='http://www.roblox.com/asset/?id=20329976'
+				mesh.Scale=Vector3.new(4,4,4)
+				local part2=part:clone()
+				part2.Parent = rarm
+				part2.BrickColor=BrickColor.new("Deep orange")
+				local part5=part:clone()
+				part5.Parent = rarm
+				part5.BrickColor=BrickColor.new("Deep orange")
+				local part6=part:clone()
+				part6.Parent = rarm
+				part6.BrickColor=BrickColor.new("Deep orange")
+				local mesh2=mesh:clone()
+				mesh2.Parent=part2
+				mesh2.Scale=Vector3.new(6, 6, 6)
+				local mesh5=mesh:clone()
+				mesh5.Parent=part5
+				mesh5.Scale=Vector3.new(6, 6, 6)
+				local mesh6=mesh:clone()
+				mesh6.Parent=part6
+				mesh6.Scale=Vector3.new(6, 6, 6)
+				local blast = Instance.new("Part", rarm)
+				blast.BrickColor = BrickColor.new("Really black")
+				blast.Anchored = true
+				blast.CanCollide = false
+				blast.Locked = true
+				blast.Size = Vector3.new(2, 2, 2)
+				blast.TopSurface = "Smooth"
+				blast.BottomSurface = "Smooth"
+				blast.Transparency = 0
+				blast.CFrame = HandCF
+				local bm = Instance.new("SpecialMesh", blast)
+				bm.Scale = Vector3.new(10,2,10)
+				bm.MeshId = "rbxassetid://3270017"
+				local blast2 = Instance.new("Part", rarm)
+				blast2.BrickColor = BrickColor.new("Really black")
+				blast2.Anchored = true
+				blast2.CanCollide = false
+				blast2.Locked = true
+				blast2.Size = Vector3.new(2, 2, 2)
+				blast2.TopSurface = "Smooth"
+				blast2.BottomSurface = "Smooth"
+				blast2.Transparency = 0
+				blast2.CFrame = HandCF
+				local bm2 = Instance.new("SpecialMesh", blast2)
+				bm2.Scale = Vector3.new(6,2,6)
+				bm2.MeshId = "rbxassetid://3270017"
+				local blast3 = Instance.new("Part", rarm)
+				blast3.BrickColor = BrickColor.new("Really black")
+				blast3.Anchored = true
+				blast3.CanCollide = false
+				blast3.Locked = true
+				blast3.Size = Vector3.new(1, 1, 1)
+				blast3.TopSurface = "Smooth"
+				blast3.BottomSurface = "Smooth"
+				blast3.Transparency = 0
+				blast3.CFrame = HandCF
+				local bm3 = Instance.new("SpecialMesh", blast3)
+				bm3.Scale = Vector3.new(6,2,6)
+				bm3.MeshId = "rbxassetid://3270017"
+				for i = 1,120 do rs:wait()
+					X.Transparency = X.Transparency + (1/120)
+					part.Transparency = part.Transparency + (1/120)
+					part2.Transparency = part2.Transparency + (1/120)
+					part3.Transparency = part3.Transparency + (1/120)
+					part4.Transparency = part4.Transparency + (1/120)
+					part5.Transparency = part5.Transparency + (1/120)
+					part6.Transparency = part6.Transparency + (1/120)
+					part7.Transparency = part7.Transparency + (1/120)
+					blast.Transparency = blast.Transparency + (1/120)
+					blast2.Transparency = blast2.Transparency + (1/120)
+					blast3.Transparency = blast3.Transparency + (1/120)
+					X.Size = X.Size + Vector3.new(1.6,1.6,1.6)
+					--part3.Size = part3.Size + Vector3.new(6,6,6)
+					mesh.Scale = mesh.Scale + Vector3.new(2,.4,2)
+					mesh2.Scale = mesh2.Scale + Vector3.new(2.2,.4,2.2)
+					mesh3.Scale = mesh3.Scale + Vector3.new(6,6,6)
+					mesh4.Scale = mesh4.Scale + Vector3.new(3.4,3.4,3.4)
+					mesh5.Scale = mesh5.Scale + Vector3.new(3.2,.4,3.2)
+					mesh6.Scale = mesh6.Scale + Vector3.new(4,.4,4)
+					mesh7.Scale = mesh7.Scale + Vector3.new(8,8,8)
+					bm.Scale = bm.Scale + Vector3.new(12,12,.4)
+					bm2.Scale = bm2.Scale + Vector3.new(8,8,.4)
+					bm3.Scale = bm3.Scale + Vector3.new(8,8,.4)
+					X.CFrame = cf
+					part.CFrame=X.CFrame * CFrame.Angles(0,math.rad(i*2),0)
+					part2.CFrame=X.CFrame * CFrame.Angles(0,math.rad(-i*2),0)
+					part3.CFrame=X.CFrame
+					part4.CFrame=X.CFrame
+					part7.CFrame=X.CFrame
+					part5.CFrame=X.CFrame * CFrame.Angles(0,math.rad(i*2.6),0)
+					part6.CFrame=X.CFrame * CFrame.Angles(0,math.rad(-i*2.4),0)
+					blast.CFrame=X.CFrame * CFrame.Angles(math.rad(90), math.rad(0), math.rad(0))
+					blast2.CFrame=X.CFrame * CFrame.Angles(math.rad(-i*4), math.rad(i*4), math.rad(0))
+					blast3.CFrame=X.CFrame * CFrame.Angles(math.rad(180+i*4), math.rad(90-i*4), math.rad(0))
+					rs:wait()
+					end
+					X:Destroy()
+					part:Destroy()
+					part2:Destroy()
+					part3:Destroy()
+					part4:Destroy()
+					part5:Destroy()
+					part6:Destroy()
+					blast:Destroy()
+					blast2:Destroy()
+					blast3:Destroy()
+					z:Destroy()
+					z1:Destroy()
+					z2:Destroy()
+					z3:Destroy()
+					z4:Destroy()
+		end
+	end)
+	
+	
+			if Debounces.CanAttack == false then
+				Debounces.CanAttack = true
+				Debounces.NoIdl = false
+				Debounces.on = false
+			end
+	end
+	end
+	end)
+
+
+
+
+
+
+
+function Throw()
+	    if Grab == true then
+        Grab = false
+	stanceToggle = "Normal"
+			for i = 1, 16 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(math.rad(-20),math.rad(0),math.rad(20)), 0.3)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,0.65,0)*CFrame.Angles(math.rad(140),math.rad(0),math.rad(-50)), 0.3)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(20),math.rad(-60),0), 0.3)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0, math.rad(50), 0), 0.3)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(0), math.rad(30), math.rad(-20)), 0.3)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-10), math.rad(-15), math.rad(20)), 0.3)
+			if Debounces.on == false then end
+			rs:wait()
+			end
+					for i = 1, 16 do
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65,0)*CFrame.Angles(math.rad(20),math.rad(0),math.rad(20)), 0.3)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,1.5,-.4)*CFrame.Angles(math.rad(-90),math.rad(0),math.rad(20)), 0.3)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(0),math.rad(-10),0), 0.3)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(0), 0), 0.3)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(10), math.rad(30), math.rad(-20)), 0.3)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-15), math.rad(-15), math.rad(20)), 0.3)
+			if Debounces.on == false then end
+			rs:wait()
+		end
+       
+	
+                                    z3 = Instance.new("Sound",torso)
+                                    z3.SoundId = "rbxassetid://200632136"
+									z3.Pitch = 0.7
+                                    z3.Volume = 14
+                                    z3:Play()	
+	
+        for i,v in pairs(larm:GetChildren()) do
+            if v.Name == "asd" and v:IsA("Weld") then
+                v:Remove()
+            end
+        end
+
+        Ragdoll(true,gp)
+        bv = Instance.new("BodyVelocity",gp:FindFirstChild("Torso"))
+        bv.maxForce = Vector3.new(400000, 400000, 400000)
+        bv.P = 125000
+        bv.velocity = char.Head.CFrame.lookVector * 70
+
+
+
+        for i = 1, 12 do
+            larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.6, 0, -.75)*CFrame.Angles(math.rad(120),math.rad(0),math.rad(20)), 0.5)
+            if Debounces.on == false then end
+            wait()
+        end
+        ht=nil
+        Spawn(function()
+            wait(0.5)
+            bv:Destroy()
+        end)
+		stanceToggle = "Idle1"
+        Debounces.on = false
+        Debounces.NoIdl = false
+        elseif ht == nil then wait()
+        Grab = false
+        Debounces.on = false
+        Debounces.NoIdl = false
+            end
+        end
+
+
+
+function Drop()
+	if Grab == true then
+		Grab = false
+		for i,v in pairs(larm:GetChildren()) do
+            if v.Name == "asd" and v:IsA("Weld") then
+                v:Remove()
+            end
+		        end
+		wait(0.1)
+		stanceToggle = "Idle1"
+
+	end
+end
+
+
+mouse.KeyDown:connect(function(key)
+    if key == "x" then
+  if Grab == true then
+		Throw()
+		end
+		end
+	end)
+
+function Break()
+	if Grab == true then
+		z3 = Instance.new("Sound",torso)
+        z3.SoundId = "rbxassetid://314390675"
+		z3.Pitch = 0.7
+        z3.Volume = 34
+        z3:Play()
+        wait(0.1)
+        Ragdoll(true,gp)	
+	end
+end
+
+
+mouse.KeyDown:connect(function(key)
+    if key == "c" then
+  if Grab == true then
+		Break()
+		end
+		end
+end)
+
+mouse.KeyDown:connect(function(key)
+    if key == "v" then
+  if Grab == true then
+		Drop()
+		end
+		end
+end)
+
+mouse.KeyDown:connect(function(key)
+	if key == "g" then
+		if Grab == true then
+			FinishHim()
+		end
+	end
+end)
+
+
+
+local animpose = "Idle1"
+local lastanimpose = "Idle1"
+local grab = false
+local Smooth = 1
+local sine = 0
+local change = 1
+local val = 0
+local ffing = false
+----------------------------------------------------
+x = Instance.new("Sound", char)
+x.SoundId = "http://www.roblox.com/asset/?id=198360408"
+x.Looped = true
+x.Volume = 15
+local footsteps = false
+---------------------------------------------
+jump = false
+rs:connect(function()
+	if char.Humanoid.Jump == true then
+		jump = true
+	else
+		jump = false
+	end
+	char.Humanoid.FreeFalling:connect(function(f)
+		if f then
+			ffing = true
+		else
+			ffing = false
+		end
+	end)
+	sine = sine + change
+	if jump == true then
+		animpose = "Jumping"
+	elseif ffing == true then
+		animpose = "Freefalling"
+	elseif (torso.Velocity*Vector3.new(1, 0, 1)).magnitude < 2 then
+		animpose = "Idle"
+	elseif (torso.Velocity*Vector3.new(1, 0, 1)).magnitude < 20 then
+		animpose = "Walking"
+	elseif (torso.Velocity*Vector3.new(1, 0, 1)).magnitude > 20 then
+		animpose = "Running"
+	end
+	RightLeg = CFrame.new(0.5,-1,0)
+	LeftLeg = CFrame.new(-0.5,-1,0)
+
+	lefth = (torso.CFrame*LeftLeg)
+	righth = (torso.CFrame*RightLeg)
+
+	speed = Vector3.new(torso.Velocity.X,0,torso.Velocity.Z)
+
+	TiltOnAxis = (torso.CFrame-torso.CFrame.p):vectorToObjectSpace(speed/100)
+
+	local AngleThetaR = (righth-righth.p):vectorToObjectSpace(speed/100)
+	local AngleThetaL = (lefth-lefth.p):vectorToObjectSpace(speed/100)
+	if animpose ~= lastanimpose then
+		sine = 0
+		if Debounces.NoIdl == false then
+			if stanceToggle == "Idle1" then
+				rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.6,0.2)*CFrame.Angles(math.rad(-12-4*math.cos(sine/22)),math.rad(-12-2*math.cos(sine/22)),math.rad(12+2*math.cos(sine/22))), 0.3)
+				larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,0.6,-0.2)*CFrame.Angles(math.rad(20+4*math.cos(sine/22)),math.rad(-22-2*math.cos(sine/22)),math.rad(-15-2*math.cos(sine/22))), 0.3)
+				hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,0)*CFrame.Angles(math.rad(-12+2.5*math.cos(sine/22)),math.rad(0),math.rad(0)), 0.2)
+				torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-2+2*math.cos(sine/22)), math.rad(0), 0), 0.2)
+				lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, -0.06) * CFrame.Angles(math.rad(0-2*math.cos(sine/22)), math.rad(5), math.rad(-5)), 0.2)
+				rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, -0.06) * CFrame.Angles(math.rad(0-2*math.cos(sine/22)), math.rad(-5), math.rad(5)), 0.2)
+			elseif stanceToggle == "Idle2" then
+				rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.6,0.2)*CFrame.Angles(math.rad(-22-4*math.cos(sine/12)),math.rad(-40-2*math.cos(sine/12)),math.rad(24+2*math.cos(sine/12))), 0.3)
+				larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.2,0.6,-0.6)*CFrame.Angles(math.rad(90+4*math.cos(sine/12)),math.rad(0),math.rad(50-2*math.cos(sine/12))), 0.3)
+				hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,0)*CFrame.Angles(math.rad(-6+2.5*math.cos(sine/12)),math.rad(0),math.rad(0)), 0.2)
+				torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1.5, 0) * CFrame.Angles(math.rad(-20+2*math.cos(sine/12)), math.rad(0), 0), 0.2)
+				lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -0.4, -1) * CFrame.Angles(math.rad(-7-2*math.cos(sine/12)), math.rad(7), math.rad(-5)), 0.2)
+				rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -0.8, -0.2) * CFrame.Angles(math.rad(-30-2*math.cos(sine/12)), math.rad(-9), math.rad(5)), 0.2)
+			end
+			fat.Event:wait()
+		end
+		else
+	end
+	lastanimpose = animpose
+	if Debounces.NoIdl == false then
+		if animpose == "Idle" then
+			change = 0.5
+			if stanceToggle == "Idle1" then
+
+				rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.6+0.05*math.cos(sine/10),0.6+0.1*math.cos(sine/10),-0.2-0.1*math.cos(sine/10))*CFrame.Angles(math.rad(8+2.5*math.cos(sine/10)),math.rad(22+7*math.cos(sine/10)),math.rad(15+2*math.cos(sine/10))), 0.8)
+				rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.5)
+				larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.6-0.05*math.cos(sine/10),0.6+0.1*math.cos(sine/10),0.2+0.1*math.cos(sine/10))*CFrame.Angles(math.rad(-8-2.5*math.cos(sine/10)),math.rad(12+5*math.cos(sine/10)),math.rad(-12-3*math.cos(sine/10))), 0.8)
+				larm.Weld.C1 = Lerp(larm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.5)
+				hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-0.1+0.05*math.cos(sine/10))*CFrame.Angles(math.rad(-15+3*math.cos(sine/10)),math.rad(0),math.rad(0)), 0.5)
+				hed.Weld.C1 = Lerp(hed.Weld.C1, CFrame.new(0,0,0)*CFrame.Angles(math.rad(0),math.rad(20-3*math.cos(sine/10)),math.rad(0)), 0.5)
+				torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-6+3*math.cos(sine/10)), math.rad(0), 0), 0.1)
+				torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0-0.08*math.cos(sine/10), -1, 0) * CFrame.Angles(math.rad(0), math.rad(-20+3*math.cos(sine/10)), 0), 0.1)
+				lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, -0.14+0.06*math.cos(sine/10)) * CFrame.Angles(math.rad(-3-3*math.cos(sine/10)), math.rad(0), math.rad(0)), 0.1)
+				lleg.Weld.C1 = Lerp(lleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(-10-3*math.cos(sine/10)), math.rad(5+3*math.cos(sine/10))), 0.1)
+				rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, -0.06) * CFrame.Angles(math.rad(8-3*math.cos(sine/10)), math.rad(0), math.rad(0)), 0.1)
+				rleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(10-3*math.cos(sine/10)), math.rad(-5+3*math.cos(sine/10))), 0.1)
+			elseif stanceToggle == "Idle2" then
+
+				rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65-0.1*math.cos(sine/3),0)*CFrame.Angles(math.rad(10),math.rad(0),math.rad(20-2*math.cos(sine/3))), 0.1)
+				rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0,0.5,0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.2)
+				larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.23, 0.5, -.56) * CFrame.Angles(math.rad(88+4*math.cos(sine/3)), 0, math.rad(45)), 0.6)
+				larm.Weld.C1 = Lerp(larm.Weld.C1, CFrame.new(0,0.5,0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.2)
+				torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -2-0.05*math.cos(sine/3), 0) * CFrame.Angles(math.rad(-10+2*math.cos(sine/6)), 0, 0), 0.8)
+				torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(0), 0), 0.1)
+				hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, -.2) * CFrame.Angles(math.rad(-10), 0, 0), 0.3)
+				--hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0, 1.5, -.2) * CFrame.Angles(math.rad(-5-10*math.cos(sine/18)), math.sin(sine/36)/3, 0), 0.3)
+				hed.Weld.C1 = Lerp(hed.Weld.C1, CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.5)
+				lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, 0, -1.15) * CFrame.Angles(math.rad(-9-2*math.cos(sine/6)), 0, 0), 0.8)
+				lleg.Weld.C1 = Lerp(lleg.Weld.C1, CFrame.new(0, 1-0.1*math.cos(sine/3), 0+0.04*math.cos(sine/6)) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(5)), 0.8)
+				rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, -.1) * CFrame.Angles(math.rad(-56-2*math.cos(sine/6)), 0, 0), 0.8)
+				rleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1-0.05*math.cos(sine/3), 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(-5)), 0.8)
+			elseif stanceToggle == "Grabbed" then
+				grab = true
+				rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5,0.65+0.1*math.cos(sine/14),0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(40+2*math.cos(sine/14))), 0.2)
+				rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0,0.5, 0)*CFrame.Angles(math.rad(0), math.rad(0),math.rad(0)), 0.2)
+				larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.3,1.25,0)*CFrame.Angles(math.rad(100+2*math.cos(sine/14)),math.rad(-62),math.rad(-80+4*math.cos(sine/14))), 0.3)
+				larm.Weld.C1 = Lerp(larm.Weld.C1, CFrame.new(0,0.5, 0)*CFrame.Angles(math.rad(0), math.rad(0),math.rad(0)), 0.2)
+				hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(14+2*math.cos(sine/14)),math.rad(70-4*math.cos(sine/14)),0), 0.3)
+				hed.Weld.C1 = Lerp(hed.Weld.C1, CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.5)
+				torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0, math.rad(-70), 0), 0.3)
+				torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(0), 0), 0.1)
+				lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1, 0) * CFrame.Angles(math.rad(10), math.rad(30), math.rad(-20)), 0.3)
+				lleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.8)
+				rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(-10), math.rad(-15), math.rad(20)), 0.3)
+				rleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.8)
+			end
+		elseif animpose == "Walking" then
+			if stanceToggle == "Grabbed" then
+				rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5-.05*math.cos(sine/2), math.sin(sine/4)/4) * CFrame.Angles(-math.sin(sine/4)/2.8, -math.sin(sine/4)/3, (math.rad(10+7*math.cos(sine/2))+root.RotVelocity.Y/30)), 0.4)
+				rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.7)
+				larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5,0.65,0)*CFrame.Angles(math.rad(120+4*math.cos(sine/2)),math.rad(-62),math.rad(-30+4*math.cos(sine/4))), 0.3)
+				larm.Weld.C1 = Lerp(larm.Weld.C1, CFrame.new(0,0.5, 0)*CFrame.Angles(math.rad(0), math.rad(0),math.rad(0)), 0.2)
+				hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-0.1+0.1*math.cos(sine/2))*CFrame.Angles(math.rad(-10+4*math.cos(sine/2)), math.rad(0-8*math.cos(sine/4)/2.3), math.rad(0)),0.4)
+				hed.Weld.C1 = Lerp(hed.Weld.C1, CFrame.new(0,0,0)*CFrame.Angles(math.rad(0),math.rad(0)-root.RotVelocity.Y/10,math.rad(0)), 0.7)
+				torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1+0.12*math.cos(sine/2), 0) * CFrame.Angles(math.rad(-4+2*math.cos(sine/2)), math.rad(0+10*math.cos(sine/4)/2.3)+root.RotVelocity.Y/30, math.rad(0)+root.RotVelocity.Y/30), 0.4)
+				--rj.C0 = rj.C0:lerp(CFrame.Angles(math.rad(-90)+TiltOnAxis.Z,TiltOnAxis.X,math.rad(180)+-TiltOnAxis.X),.1)
+				torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(0), 0), 0.8)
+				lleg.Weld.C0 = lleg.Weld.C0:lerp(CFrame.new(-0.5,-1-math.cos(sine/4)*.3,0+math.sin(sine/4)*.1)*CFrame.Angles(math.sin(sine/4)*3*AngleThetaL.Z,AngleThetaL.X,(math.sin(sine/4)*3*-AngleThetaL.X)-root.RotVelocity.Y/20),0.8)
+				lleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.8)
+				rleg.Weld.C0 = rleg.Weld.C0:lerp(CFrame.new(0.5,-1+math.cos(sine/4)*.3,0-math.sin(sine/4)*.1)*CFrame.Angles(math.sin(sine/4)*3*-AngleThetaR.Z,AngleThetaR.X,(math.sin(sine/4)*3*AngleThetaR.X)-root.RotVelocity.Y/20),0.8)
+				rleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.8)
+			elseif stanceToggle ~= "Grabbed" then
+				change = 0.5
+		
+				rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.5-.05*math.cos(sine/2), math.sin(sine/4)/4) * CFrame.Angles(-math.sin(sine/4)/2.8, -math.sin(sine/4)/3, (math.rad(10+7*math.cos(sine/2))+root.RotVelocity.Y/30)), 0.4)
+				rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.7)
+				larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.5+.05*math.cos(sine/2), -math.sin(sine/4)/4)*CFrame.Angles(math.sin(sine/4)/2.8, -math.sin(sine/4)/3, (math.rad(-10-7*math.cos(sine/2))+root.RotVelocity.Y/30)), 0.4)
+				larm.Weld.C1 = Lerp(larm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.7)
+				hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-0.1+0.1*math.cos(sine/2))*CFrame.Angles(math.rad(-10+4*math.cos(sine/2)), math.rad(0-8*math.cos(sine/4)/2.3), math.rad(0)),0.4)
+				hed.Weld.C1 = Lerp(hed.Weld.C1, CFrame.new(0,0,0)*CFrame.Angles(math.rad(0),math.rad(0)-root.RotVelocity.Y/10,math.rad(0)), 0.7)
+				torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1+0.12*math.cos(sine/2), 0) * CFrame.Angles(math.rad(-4+2*math.cos(sine/2)), math.rad(0+10*math.cos(sine/4)/2.3)+root.RotVelocity.Y/30, math.rad(0)+root.RotVelocity.Y/30), 0.4)
+				--rj.C0 = rj.C0:lerp(CFrame.Angles(math.rad(-90)+TiltOnAxis.Z,TiltOnAxis.X,math.rad(180)+-TiltOnAxis.X),.1)
+				torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(0), 0), 0.8)
+				--lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -0.9-0.24*math.cos(sine/4)/2.8, -0.05 + math.sin(sine/4)/3.4) * CFrame.Angles(math.rad(-5)-math.sin(sine/4)/2.1, math.rad(0-10*math.cos(sine/4)/2.3), 0-root.RotVelocity.Y/20), .4)
+				lleg.Weld.C0 = lleg.Weld.C0:lerp(CFrame.new(-0.5,-1-math.cos(sine/4)*.3,0+math.sin(sine/4)*.1)*CFrame.Angles(math.sin(sine/4)*3*AngleThetaL.Z,AngleThetaL.X,(math.sin(sine/4)*3*-AngleThetaL.X)-root.RotVelocity.Y/20),0.8)
+				lleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.8)
+				--rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -0.9+0.24*math.cos(sine/4)/2.8, -0.05 + -math.sin(sine/4)/3.4) * CFrame.Angles(math.rad(-5)+math.sin(sine/4)/2.1, math.rad(0-10*math.cos(sine/4)/2.3), 0-root.RotVelocity.Y/20), .4)
+				rleg.Weld.C0 = rleg.Weld.C0:lerp(CFrame.new(0.5,-1+math.cos(sine/4)*.3,0-math.sin(sine/4)*.1)*CFrame.Angles(math.sin(sine/4)*3*-AngleThetaR.Z,AngleThetaR.X,(math.sin(sine/4)*3*AngleThetaR.X)-root.RotVelocity.Y/20),0.8)
+				rleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.8)
+			end
+		elseif animpose == "Running" then
+			change = 1
+
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.24+.6*math.cos(sine/4)/1.4, 0.54, 0+0.8*math.cos(sine/4)) * CFrame.Angles(math.rad(6-140*math.cos(sine/4)/1.2), math.rad(0), math.rad(-20+70*math.cos(sine/4))), 0.2)
+			rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.36)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.24+.6*math.cos(sine/4)/1.4, 0.54, 0-0.8*math.cos(sine/4))*CFrame.Angles(math.rad(6+140*math.cos(sine/4)/1.2), math.rad(0), math.rad(20+70*math.cos(sine/4))), 0.2)
+			larm.Weld.C1 = Lerp(larm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.5)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,-.2)*CFrame.Angles(math.rad(-8+12*math.cos(sine/2)/1.5), math.rad(0+12*math.cos(sine/4)), math.rad(0)),0.2)
+			hed.Weld.C1 = Lerp(hed.Weld.C1, CFrame.new(0,0,0)*CFrame.Angles(math.rad(0),math.rad(0)-root.RotVelocity.Y/10,math.rad(0)), 0.5)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1+0.2*math.cos(sine/2)/1.7, 0) * CFrame.Angles(math.rad(-14+10*math.cos(sine/2)/1.5), math.rad(0-12*math.cos(sine/4))-root.RotVelocity.Y/10, math.rad(0)+root.RotVelocity.Y/20), 0.2)
+			torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(0), 0), 0.4)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -.8-0.4*math.cos(sine/4)/2, math.sin(sine/4)/2) * CFrame.Angles(math.rad(-10) + -math.sin(sine/4)/1.2, math.rad(0+12*math.cos(sine/4))+root.RotVelocity.Y/10, 0), .8)
+			lleg.Weld.C1 = Lerp(lleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.4)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -.8+0.4*math.cos(sine/4)/2, -math.sin(sine/4)/2) * CFrame.Angles(math.rad(-10) + math.sin(sine/4)/1.2, math.rad(0+12*math.cos(sine/4))+root.RotVelocity.Y/10, 0), .8)
+			rleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.4)
+		elseif animpose == "Jumping" then
+
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.6, 0)*CFrame.Angles(math.rad(-10),math.rad(0),math.rad(20)), 0.2)
+			rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.36)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.6, 0)*CFrame.Angles(math.rad(-10),math.rad(0),math.rad(-20)), 0.2)
+			larm.Weld.C1 = Lerp(larm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.5)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,0)*CFrame.Angles(math.rad(30),math.rad(0),0), 0.2)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-10), math.rad(0), 0), 0.2)
+			torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(0), 0), 0.4)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -1.1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.2)
+			lleg.Weld.C1 = Lerp(lleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.4)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -1.1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.2)
+			rleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.4)
+		elseif animpose == "Freefalling" then
+
+			rarm.Weld.C0 = Lerp(rarm.Weld.C0, CFrame.new(1.5, 0.6, 0)*CFrame.Angles(math.rad(-40),math.rad(20),math.rad(50)), 0.2)
+			rarm.Weld.C1 = Lerp(rarm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.36)
+			larm.Weld.C0 = Lerp(larm.Weld.C0, CFrame.new(-1.5, 0.6, 0)*CFrame.Angles(math.rad(110),math.rad(-20),math.rad(-30)), 0.2)
+			larm.Weld.C1 = Lerp(larm.Weld.C1, CFrame.new(0, 0.5, 0)*CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.5)
+			hed.Weld.C0 = Lerp(hed.Weld.C0, CFrame.new(0,1.5,0)*CFrame.Angles(math.rad(10),math.rad(0),0), 0.2)
+			torso.Weld.C0 = Lerp(torso.Weld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-30), math.rad(0), 0), 0.2)
+			torso.Weld.C1 = Lerp(torso.Weld.C1, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(0), 0), 0.4)
+			lleg.Weld.C0 = Lerp(lleg.Weld.C0, CFrame.new(-0.5, -0.5, 0.2) * CFrame.Angles(math.rad(-30), math.rad(0), math.rad(0)), 0.2)
+			lleg.Weld.C1 = Lerp(lleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.4)
+			rleg.Weld.C0 = Lerp(rleg.Weld.C0, CFrame.new(0.5, -0.5, -0.6) * CFrame.Angles(math.rad(40), math.rad(0), math.rad(0)), 0.2)
+			rleg.Weld.C1 = Lerp(rleg.Weld.C1, CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), 0.4)
+		end
+	end
+
+if animpose == "Walking" then
+    if footsteps == false then
+        x:Play()
+        footsteps = true
+    end
+    x.Pitch = 1.1
+elseif animpose == "Idle" then
+    x:Stop()
+    footsteps = false
+elseif animpose == "Running" then
+    x.Pitch = 1.2
+    if footsteps == false then
+        x:Play()
+        footsteps = true
+    end
+end
+end)
+hum.MaxHealth = math.huge
+wait(3)
+hum.Health = math.huge
